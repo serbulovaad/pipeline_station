@@ -16,7 +16,8 @@ struct pipe
 struct CS //Compressor station
 {
 	string name = "";
-	int ws; // workstations in use
+	int ws; // workstations 
+	int ws_repair; // // workstations in prepair
 	double eff; //efficienty;
 
 };
@@ -30,7 +31,7 @@ T inputCheck(istream& in = cin)
 	{
 		in.clear();
 		in.ignore(10000, '\n');
-		cout << "Try again\n ";
+		cout << "wrong type --> try again: ";
 	}
 	return x;
 }
@@ -49,6 +50,7 @@ ostream& operator << (ostream& out, const CS& cs)
 {
 	out << "name: " << cs.name << endl
 		<< "ws = " << cs.ws << endl
+		<< "ws in repair = " << cs.ws_repair << endl
 		<< "eff = " << cs.eff << endl;
 
 	return out;
@@ -62,8 +64,8 @@ istream& operator >> (istream& in, pipe& p) // как тут сделать проверку?
 	p.d = inputCheck<int>(in);
 	cout << "l (double) = ";
 	p.l = inputCheck<double>(in);
-	cout << "repair (true - under repair, false - ready for use) =";
-	in >> p.repair;
+	cout << "repair (bool: true or 1 - under repair, false or 0 - ready for use) = ";
+	p.repair = inputCheck<bool>(in);
 
 	return in;
 }
@@ -71,11 +73,13 @@ istream& operator >> (istream& in, pipe& p) // как тут сделать проверку?
 istream& operator >> (istream& in, CS& cs) // как тут сделать проверку?
 {
 	cout << "name (str): ";
-	in >> cs.name;
+	cs.name = inputCheck<string>(in);
 	cout << "ws (int) = ";
-	in >> cs.ws;
+	cs.ws = inputCheck<int>(in);
+	cout << "ws in repair (int) = ";
+	cs.ws_repair = inputCheck<int>(in);
 	cout << "eff (double) = ";
-	in >> cs.eff;
+	cs.eff = inputCheck<double>(in);
 	
 	return in;
 }
@@ -122,11 +126,27 @@ void viewAll(const pipe& p, const CS& cs)
 
 int editPipe(pipe& p)
 {
-
+	cout << "Current repair status for pipe: " << p.repair << endl;
+	cout << "New status (true or 1 - under repair, false or 0 - ready for use): ";
+	p.repair = inputCheck<bool>();
 	return 0;
 }
 
 int editCS(CS& cs)
+{
+	cout << "Current numer of ws in repair for CS: " << cs.ws_repair << endl;
+	cout << "New number (int): ";
+	cs.ws_repair = inputCheck<int>();
+	return 0;
+}
+
+int saveFile(const pipe& p, const CS& cs)
+{
+
+	return 0;
+}
+
+int downloadFile(const pipe& p, const CS& cs)
 {
 
 	return 0;
@@ -185,13 +205,13 @@ int MenuOutput()
 					break;
 				}
 				case 6:
-
+					saveFile(p, cs);
 					break;
 				case 7:
-
+					downloadFile(p, cs);
 					break;
 				default:
-					cout << "Error! Wrong number" << option << endl
+					cout << "Error! Wrong number: " << option << endl
 						<< "Try again" << endl << endl;
 					break;
 			}
