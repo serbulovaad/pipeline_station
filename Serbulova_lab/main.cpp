@@ -37,26 +37,27 @@ T inputCheck(istream& in = cin) // check type
 	return x;
 }
 
-//template <typename T> // как проверить красиво на полож число???	
-//T getPositiveOr0Number()
-//{
-//	T n = inputCheck();
-//	while (x<0)
-//	{
-//		cerr << "ERROR wrong number: min = 0 --> try again: ";
-//		x = inputCheck();
-//	}
-//	cout << endl;
-//	return x;
-//}
-
-int getCorrectNumber(const int& a, const int& b) // check that nu,ber is in range(a,b)
+template <typename T> // как проверить красиво на полож число???	
+T getPositiveNumber(istream& in = cin)
 {
-	int x = inputCheck<int>();
+	T x = inputCheck<T>(in);
+	while (x<=0)
+	{
+		cerr << "ERROR wrong number: min > 0 --> try again: ";
+		x = inputCheck<T>(in);
+	}
+	cout << endl;
+	return x;
+}
+
+template <typename T>
+T getCorrectNumber(const T& a, const T& b, istream& in = cin) // check that nu,ber is in range(a,b)
+{
+	T x = inputCheck<T>(in);
 	while (x<a || x>b)
 	{
 		cerr << "ERROR wrong number: min = " << a << " and max = " << b << " --> try again: ";
-		x = inputCheck<int>();
+		x = inputCheck<T>(in);
 	}
 	cout << endl;
 	return x;
@@ -90,9 +91,9 @@ istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сдел
 	cout << "name (str) = ";
 	p.name = inputCheck<string>(in);
 	cout << "d (int) = ";
-	p.d = inputCheck<int>(in);
+	p.d = getPositiveNumber<int>(in);
 	cout << "l (double) = ";
-	p.l = inputCheck<double>(in);
+	p.l = getPositiveNumber<double>(in);
 	cout << "repair status: 0 (ready for use)\n" << endl;
 	//cout << "repair (bool: true or 1 - under repair, false or 0 - ready for use) = ";
 	//p.repair = inputCheck<bool>(in);
@@ -106,12 +107,12 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 	cout << "name (str): ";
 	cs.name = inputCheck<string>(in);
 	cout << "ws (int) = ";
-	cs.ws = inputCheck<int>(in);
+	cs.ws = getPositiveNumber<int>(in);
 	cout << "ws in repair (int) = 0 (all ready for use)\n";
 	//cout << "ws in repair (int) = ";
 	//cs.ws_repair = inputCheck<int>(in);
 	cout << "eff (double) = ";
-	cs.eff = inputCheck<double>(in);
+	cs.eff = getPositiveNumber<double>(in);
 	cout << endl;
 
 	return in;
@@ -320,6 +321,11 @@ int main()
 
 	cout << "Привет Hello" << endl;
 
+	//unsigned int a = 0;
+	//cout << a;
+
+	//return 0;
+	
 	MenuOutput();
 
 
