@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 using namespace std;
 
 // поменять на getline()?
@@ -36,7 +37,7 @@ T inputCheck(istream& in = cin) // check type
 	return x;
 }
 
-int getCorrectNumber(int b, int a) // check that nu,ber is in range(a,b)
+int getCorrectNumber(const int& b, const int& a) // check that nu,ber is in range(a,b)
 {
 	int x = inputCheck<int>();
 	while (x<b || x>a)
@@ -50,6 +51,7 @@ int getCorrectNumber(int b, int a) // check that nu,ber is in range(a,b)
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
+	cout << "Add pipe" << endl;
 	out << "name: " << p.name << endl
 		<< "d: " << p.d << endl
 		<< "l: " << p.l << endl
@@ -70,6 +72,7 @@ ostream& operator << (ostream& out, const CS& cs) // output for CS
 
 istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сделали // intput for pipe
 {
+	cout << "Add pipe" << endl;
 	cout << "name (str) = ";
 	p.name = inputCheck<string>(in);
 	cout << "d (int) = ";
@@ -85,6 +88,7 @@ istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сдел
 
 istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сделали // intput for CS
 {
+	cout << "Add CS" << endl;
 	cout << "name (str): ";
 	cs.name = inputCheck<string>(in);
 	cout << "ws (int) = ";
@@ -95,17 +99,14 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 	cout << "eff (double) = ";
 	cs.eff = inputCheck<double>(in);
 	cout << endl;
-	
+
 	return in;
 }
 
 void addPipe(pipe& p) // add new pipe
 {
 	if (p.name == "")
-	{
-		cout << "Add pipe" << endl;
 		cin >> p;
-	}
 	else
 	{
 		cout << "Pipe already exist\n" << endl
@@ -117,7 +118,7 @@ void addPipe(pipe& p) // add new pipe
 			cin >> p;
 		}
 		else
-			cout << "Ok" << endl << endl;;
+			cout << "Ok" << endl << endl;
 	}
 }
 
@@ -125,12 +126,11 @@ void addCS(CS& cs) // add new CS
 {
 	if (cs.name == "")
 	{
-		cout << "Add CS" << endl;
 		cin >> cs;
 	}
 	else
 	{
-		cout << "CS already exist\n" << endl 
+		cout << "CS already exist\n" << endl
 			<< "Do you want to rewrite it?" << endl
 			<< "yes - 1           no - 2" << endl;
 		if (getCorrectNumber(1, 2) == 1)
@@ -185,14 +185,33 @@ void editCS(CS& cs) // change number of ws in repair for cs
 
 void saveFile(const pipe& p, const CS& cs)
 {
+	ofstream fout;
+	fout.open("data.txt", ios::out);
+	fout << p.name << endl << p.l << endl << p.d << endl << p.repair << endl
+		<< cs.name << endl << cs.ws << endl << cs.ws_repair << endl << cs.eff << endl;
+	fout.close();
 
-
+	cout << "Pipe and CS saved" << endl << endl;
 }
 
-void downloadFile(const pipe& p, const CS& cs)
+void loadFile(pipe& p, CS& cs) // загружает когда трубы КС отсутсств что делать?
 {
+	ifstream fin;
+	fin.open("data.txt", ios::in);
 
+	fin >> p.name;
+	fin >> p.l;
+	fin >> p.d;
+	fin >> p.repair;
 
+	fin >> cs.name;
+	fin >> cs.ws;
+	fin >> cs.ws_repair;
+	fin >> cs.eff;
+
+	fin.close();
+
+	cout << "Pipe and CS loaded" << endl << endl;
 }
 
 
@@ -224,19 +243,16 @@ int MenuOutput()
 					addPipe(p);
 					break;
 				}
-					
 				case 2:
 				{
 					addCS(cs);
 					break;
 				}
-					
 				case 3:
 				{
 					viewAll(p, cs);
 					break;
 				}
-					
 				case 4:
 				{
 					editPipe(p);
@@ -248,27 +264,33 @@ int MenuOutput()
 					break;
 				}
 				case 6:
+				{
 					saveFile(p, cs);
 					break;
+				}
 				case 7:
-					downloadFile(p, cs);
+				{
+					loadFile(p, cs);
 					break;
+				}
 				default:
-					cerr << "Error" << endl << "End of program" << endl;
+				{
+					cerr << "ERROR unexpected" << endl << "End of program" << endl;
 					return 0;
 					break;
+				}
 			}
-		} 
-		else 
+		}
+		else
 		{
 			cout << "Goodbye!" << endl;
 			return 0;
 		}
 
-		cout << "Press Enter to continue";
+		cout << endl << "Press Enter to continue";
 		cin.get(); cin.get();
 		cout << endl << endl;
-		
+
 	}
 }
 
