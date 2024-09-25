@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-
+// поменять на getline()?
 
 //properties
 struct pipe
@@ -10,20 +10,20 @@ struct pipe
 	string name = "";
 	int l; // length;
 	double d; // diameter;
-	bool repair; // 0 False - ready for use, 1 True - under repair
+	bool repair = 0; // 0 False - ready for use, 1 True - under repair
 };
 
 struct CS //Compressor station
 {
 	string name = "";
 	int ws; // workstations 
-	int ws_repair; // // workstations in prepair
+	int ws_repair = 0; // // workstations in prepair
 	double eff; //efficienty;
 
 };
 
-template <typename T>
-T inputCheck(istream& in = cin)
+template <typename T> // template to check different types of variables
+T inputCheck(istream& in = cin) // check type
 {
 	T x;
 	while ((in >> x).fail()	// check type
@@ -31,125 +31,168 @@ T inputCheck(istream& in = cin)
 	{
 		in.clear();
 		in.ignore(10000, '\n');
-		cout << "wrong type --> try again: ";
+		cerr << "ERROR wrong type --> try again: ";
 	}
 	return x;
 }
 
-ostream& operator << (ostream& out, const pipe& p) //
+int getCorrectNumber(int b, int a) // check that nu,ber is in range(a,b)
+{
+	int x = inputCheck<int>();
+	while (x<b || x>a)
+	{
+		cerr << "ERROR wrong number: min = " << b << " and max = " << a << " --> try again: ";
+		x = inputCheck<int>();
+	}
+	cout << endl;
+	return x;
+}
+
+ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
 	out << "name: " << p.name << endl
-		<< "d = " << p.d << endl
-		<< "l = " << p.l << endl
-		<< "repair = " << p.repair << endl;
+		<< "d: " << p.d << endl
+		<< "l: " << p.l << endl
+		<< "repair status: " << p.repair << endl;
 
 	return out;
 }
 
-ostream& operator << (ostream& out, const CS& cs)
+ostream& operator << (ostream& out, const CS& cs) // output for CS
 {
 	out << "name: " << cs.name << endl
-		<< "ws = " << cs.ws << endl
-		<< "ws in repair = " << cs.ws_repair << endl
-		<< "eff = " << cs.eff << endl;
+		<< "ws: " << cs.ws << endl
+		<< "ws in repair: " << cs.ws_repair << endl
+		<< "eff: " << cs.eff << endl;
 
 	return out;
 }
 
-istream& operator >> (istream& in, pipe& p) // как тут сделать проверку?
+istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сделали // intput for pipe
 {
-	cout << "name (str): ";
+	cout << "name (str) = ";
 	p.name = inputCheck<string>(in);
 	cout << "d (int) = ";
 	p.d = inputCheck<int>(in);
 	cout << "l (double) = ";
 	p.l = inputCheck<double>(in);
-	cout << "repair (bool: true or 1 - under repair, false or 0 - ready for use) = ";
-	p.repair = inputCheck<bool>(in);
+	cout << "repair status: 0 (ready for use)\n" << endl;
+	//cout << "repair (bool: true or 1 - under repair, false or 0 - ready for use) = ";
+	//p.repair = inputCheck<bool>(in);
 
 	return in;
 }
 
-istream& operator >> (istream& in, CS& cs) // как тут сделать проверку?
+istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сделали // intput for CS
 {
 	cout << "name (str): ";
 	cs.name = inputCheck<string>(in);
 	cout << "ws (int) = ";
 	cs.ws = inputCheck<int>(in);
-	cout << "ws in repair (int) = ";
-	cs.ws_repair = inputCheck<int>(in);
+	cout << "ws in repair (int) = 0 (all ready for use)\n";
+	//cout << "ws in repair (int) = ";
+	//cs.ws_repair = inputCheck<int>(in);
 	cout << "eff (double) = ";
 	cs.eff = inputCheck<double>(in);
+	cout << endl;
 	
 	return in;
 }
 
-int addPipe(pipe& p)
+void addPipe(pipe& p) // add new pipe
 {
-	//if (p.name != "")
-	//{
+	if (p.name == "")
+	{
 		cout << "Add pipe" << endl;
 		cin >> p;
-		cout << endl;
-	//}
-	//else
-	//	cout << "Pipe already exist\n" << endl;
-
-	return 0;
+	}
+	else
+	{
+		cout << "Pipe already exist\n" << endl
+			<< "Do you want to rewrite it?" << endl
+			<< "yes - 1           no - 2" << endl;
+		if (getCorrectNumber(1, 2) == 1)
+		{
+			cout << "Add pipe" << endl;
+			cin >> p;
+		}
+		else
+			cout << "Ok" << endl << endl;;
+	}
 }
 
-int addCS(CS& cs)
+void addCS(CS& cs) // add new CS
 {
-	if (cs.name != "")
+	if (cs.name == "")
 	{
 		cout << "Add CS" << endl;
 		cin >> cs;
-		cout << endl;
 	}
 	else
-		cout << "CS already exist\n" << endl;
-	return 0;
+	{
+		cout << "CS already exist\n" << endl 
+			<< "Do you want to rewrite it?" << endl
+			<< "yes - 1           no - 2" << endl;
+		if (getCorrectNumber(1, 2) == 1)
+		{
+			cout << "Add CS" << endl;
+			cin >> cs;
+		}
+		else
+			cout << endl << "Ok" << endl << endl;;
+	}
 }
 
-void viewAll(const pipe& p, const CS& cs)
+void viewAll(const pipe& p, const CS& cs) // print pipe and CS
 {
 	cout << "All objects\n\n";
 	if (p.name != "")
-		cout << "pipe:\n" << p << endl;
+		cout << "Pipe\n" << p << endl;
 	else
 		cout << "Pipe is not found\n" << endl;
 	if (cs.name != "")
-		cout << "CS:\n" << cs << endl;
+		cout << "CS\n" << cs << endl;
 	else
 		cout << "CS is not found\n" << endl;
 }
 
-int editPipe(pipe& p)
+void editPipe(pipe& p) // change status of repair for pipe
 {
-	cout << "Current repair status for pipe: " << p.repair << endl;
-	cout << "New status (true or 1 - under repair, false or 0 - ready for use): ";
-	p.repair = inputCheck<bool>();
-	return 0;
+	if (p.name != "")
+	{
+		p.repair = !p.repair;
+		cout << "New repair status for \"" << p.name << "\" pipe: " << p.repair << endl << endl;
+		//cout << "Current repair status for pipe: " << p.repair << endl;
+		//cout << "New status (true or 1 - under repair, false or 0 - ready for use): ";
+		//p.repair = inputCheck<bool>();
+	}
+	else
+		cout << "Pipe is not found\n" << endl;
+
 }
 
-int editCS(CS& cs)
+void editCS(CS& cs) // change number of ws in repair for cs
 {
-	cout << "Current numer of ws in repair for CS: " << cs.ws_repair << endl;
-	cout << "New number (int): ";
-	cs.ws_repair = inputCheck<int>();
-	return 0;
+	if (cs.name != "")
+	{
+		cout << "Current numer of ws in repair for \"" << cs.name << "\" CS: " << cs.ws_repair << endl;
+		cout << "New number (int): ";
+		cs.ws_repair = getCorrectNumber(0, cs.ws);;
+	}
+	else
+		cout << "CS is not found\n" << endl;
 }
 
-int saveFile(const pipe& p, const CS& cs)
+void saveFile(const pipe& p, const CS& cs)
 {
 
-	return 0;
+
 }
 
-int downloadFile(const pipe& p, const CS& cs)
+void downloadFile(const pipe& p, const CS& cs)
 {
 
-	return 0;
+
 }
 
 
@@ -163,13 +206,13 @@ int MenuOutput()
 
 		cout << "Menu\n\n"
 			"1. Add pipe\n2. Add CS\n3. View all objects"
-			"\n4. Edit pipe\n5. Edit CS\n"
+			"\n4. Edit pipe (repair status) \n5. Edit CS (numder of ws in repair)\n"
 			"6. Save\n7. Download\n"
 			"0. Exit\n" << endl;
 
 		int option;
-		cout << "Choose option: ";
-		option = inputCheck<int>();
+		cout << "Choose option 0-7 (int): ";
+		option = getCorrectNumber(0, 7);
 		cout << endl;
 
 		if (option != 0)
@@ -211,8 +254,8 @@ int MenuOutput()
 					downloadFile(p, cs);
 					break;
 				default:
-					cout << "Error! Wrong number: " << option << endl
-						<< "Try again" << endl << endl;
+					cerr << "Error" << endl << "End of program" << endl;
+					return 0;
 					break;
 			}
 		} 
@@ -221,6 +264,10 @@ int MenuOutput()
 			cout << "Goodbye!" << endl;
 			return 0;
 		}
+
+		cout << "Press Enter to continue";
+		cin.get(); cin.get();
+		cout << endl << endl;
 		
 	}
 }
