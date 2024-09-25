@@ -37,17 +37,31 @@ T inputCheck(istream& in = cin) // check type
 	return x;
 }
 
-int getCorrectNumber(const int& b, const int& a) // check that nu,ber is in range(a,b)
+//template <typename T> // как проверить красиво на полож число???	
+//T getPositiveOr0Number()
+//{
+//	T n = inputCheck();
+//	while (x<0)
+//	{
+//		cerr << "ERROR wrong number: min = 0 --> try again: ";
+//		x = inputCheck();
+//	}
+//	cout << endl;
+//	return x;
+//}
+
+int getCorrectNumber(const int& a, const int& b) // check that nu,ber is in range(a,b)
 {
 	int x = inputCheck<int>();
-	while (x<b || x>a)
+	while (x<a || x>b)
 	{
-		cerr << "ERROR wrong number: min = " << b << " and max = " << a << " --> try again: ";
+		cerr << "ERROR wrong number: min = " << a << " and max = " << b << " --> try again: ";
 		x = inputCheck<int>();
 	}
 	cout << endl;
 	return x;
 }
+
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
@@ -103,6 +117,11 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 	return in;
 }
 
+void rewrite()
+{
+
+}
+
 void addPipe(pipe& p) // add new pipe
 {
 	if (p.name == "")
@@ -113,10 +132,7 @@ void addPipe(pipe& p) // add new pipe
 			<< "Do you want to rewrite it?" << endl
 			<< "yes - 1           no - 2" << endl;
 		if (getCorrectNumber(1, 2) == 1)
-		{
-			cout << "Add pipe" << endl;
 			cin >> p;
-		}
 		else
 			cout << "Ok" << endl << endl;
 	}
@@ -134,10 +150,7 @@ void addCS(CS& cs) // add new CS
 			<< "Do you want to rewrite it?" << endl
 			<< "yes - 1           no - 2" << endl;
 		if (getCorrectNumber(1, 2) == 1)
-		{
-			cout << "Add CS" << endl;
 			cin >> cs;
-		}
 		else
 			cout << endl << "Ok" << endl << endl;;
 	}
@@ -183,37 +196,44 @@ void editCS(CS& cs) // change number of ws in repair for cs
 		cout << "CS is not found\n" << endl;
 }
 
-void saveFile(const pipe& p, const CS& cs)
-{
-	ofstream fout;
-	fout.open("data.txt", ios::out);
-	fout << p.name << endl << p.l << endl << p.d << endl << p.repair << endl
-		<< cs.name << endl << cs.ws << endl << cs.ws_repair << endl << cs.eff << endl;
-	fout.close();
-
-	cout << "Pipe and CS saved" << endl << endl;
-}
-
 void loadFile(pipe& p, CS& cs) // загружает когда трубы КС отсутсств что делать?
 {
 	ifstream fin;
 	fin.open("data.txt", ios::in);
+	if (fin)
+	{
+		getline(fin, p.name);
+		fin >> p.l;
+		fin >> p.d;
+		fin >> p.repair;
 
-	fin >> p.name;
-	fin >> p.l;
-	fin >> p.d;
-	fin >> p.repair;
+		getline(fin, cs.name);
+		fin >> cs.ws;
+		fin >> cs.ws_repair;
+		fin >> cs.eff;
 
-	fin >> cs.name;
-	fin >> cs.ws;
-	fin >> cs.ws_repair;
-	fin >> cs.eff;
-
+		cout << "Pipe and CS loaded" << endl << endl;
+	}
+	else
+		cerr << "ERROR load" << endl;
 	fin.close();
-
-	cout << "Pipe and CS loaded" << endl << endl;
 }
 
+void saveFile(const pipe& p, const CS& cs) // как правильно сохранять?
+{
+	ofstream fout;
+	fout.open("data.txt", ios::out);
+	if (fout)
+	{
+		fout << p.name << endl << p.l << endl << p.d << endl << p.repair << endl
+			<< cs.name << endl << cs.ws << endl << cs.ws_repair << endl << cs.eff << endl;
+
+		cout << "Pipe and CS saved" << endl << endl;
+	}
+	else
+		cerr << "ERROR save" << endl;
+	fout.close();
+}
 
 int MenuOutput()
 {
