@@ -9,8 +9,8 @@ using namespace std;
 struct pipe
 {
 	string name = "";
-	int l; // length;
-	double d; // diameter;
+	double l; // length;
+	int d; // diameter;
 	bool repair = 0; // 0 False - ready for use, 1 True - under repair
 };
 
@@ -37,32 +37,25 @@ T inputCheck(istream& in = cin) // check type
 	return x;
 }
 
+template <typename T>
+T getCorrectNumber(T a, T b, bool included = true, istream& in = cin) // check that nu,ber is in range(a,b)
+{
+	T x = inputCheck<T>(in);
+	while ( (included && (x<a || x>b))
+		|| (!included && (x<=a || x>=b)) )
+ 	{
+		string str_included = included ? "= " : " ";
+		cerr << "ERROR wrong number: min >"<< str_included << a << " and max <" << str_included << b << " --> try again: ";
+		x = inputCheck<T>(in);
+	}
+	return x;
+}
+
 template <typename T> // как проверить красиво на полож число???	
 T getPositiveNumber(istream& in = cin)
 {
-	T x = inputCheck<T>(in);
-	while (x<=0)
-	{
-		cerr << "ERROR wrong number: min > 0 --> try again: ";
-		x = inputCheck<T>(in);
-	}
-	cout << endl;
-	return x;
+	return getCorrectNumber<T>(0, std::numeric_limits<T>::max(),false, in);
 }
-
-template <typename T>
-T getCorrectNumber(const T& a, const T& b, istream& in = cin) // check that nu,ber is in range(a,b)
-{
-	T x = inputCheck<T>(in);
-	while (x<a || x>b)
-	{
-		cerr << "ERROR wrong number: min = " << a << " and max = " << b << " --> try again: ";
-		x = inputCheck<T>(in);
-	}
-	cout << endl;
-	return x;
-}
-
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
@@ -118,10 +111,7 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 	return in;
 }
 
-void rewrite()
-{
 
-}
 
 void addPipe(pipe& p) // add new pipe
 {
@@ -197,39 +187,99 @@ void editCS(CS& cs) // change number of ws in repair for cs
 		cout << "CS is not found\n" << endl;
 }
 
+void loadPipe(pipe& p, ifstream& fin)
+{
+	getline(fin, p.name);
+	fin >> p.l; 
+	fin >> p.d;
+	fin >> p.repair;
+}
+
+void loadCS(CS& cs, ifstream& fin)
+{
+	getline(fin, cs.name);
+	fin >> cs.ws;
+	fin >> cs.ws_repair;
+	fin >> cs.eff;
+}
+
+
 void loadFile(pipe& p, CS& cs) // загружает когда трубы КС отсутсств что делать?
 {
+	int npipe;
+	int nCS;
 	ifstream fin;
 	fin.open("data.txt", ios::in);
 	if (fin)
 	{
-		getline(fin, p.name);
-		fin >> p.l;
-		fin >> p.d;
-		fin >> p.repair;
+		fin >> npipe;
+		if (npipe > 0)
+			loadPipe(p, fin);
 
-		getline(fin, cs.name);
-		fin >> cs.ws;
-		fin >> cs.ws_repair;
-		fin >> cs.eff;
+		fin >> nCS;
+		if (nCS > 0)
+			loadCS(cs, fin);
 
-		cout << "Pipe and CS loaded" << endl << endl;
+		cout << "Pipe loaded = " << npipe << endl
+			<< "CS loaded = " << nCS << endl;
 	}
 	else
 		cerr << "ERROR load" << endl;
 	fin.close();
 }
 
+void savePipe(const pipe& p, ofstream& fout)
+{
+	fout << p.name << endl 
+		<< p.l << endl 
+		<< p.d << endl 
+		<< p.repair << endl;;
+}
+
+void saveCS(const CS& cs, ofstream& fout)
+{
+	fout << cs.name << endl 
+		<< cs.ws << endl 
+		<< cs.ws_repair << endl 
+		<< cs.eff << endl;
+}
+
 void saveFile(const pipe& p, const CS& cs) // как правильно сохранять?
 {
+	int npipe;
+	int nCS;
+
 	ofstream fout;
 	fout.open("data.txt", ios::out);
 	if (fout)
 	{
-		fout << p.name << endl << p.l << endl << p.d << endl << p.repair << endl
-			<< cs.name << endl << cs.ws << endl << cs.ws_repair << endl << cs.eff << endl;
+		if (p.name == "")
+		{
+			npipe = 0;
+			fout << npipe << endl;
+		}
+		else
+		{
+			npipe = 1;
+			fout << npipe << endl;
+			savePipe(p, fout);
+		}
+			
+		if (cs.name == "")
+		{
+			nCS = 0;
+			fout << nCS << endl;
+		}
+		else
+		{
+			nCS = 1;
+			fout << nCS << endl;
+			saveCS(cs, fout);
+		}
 
-		cout << "Pipe and CS saved" << endl << endl;
+
+		cout << "Pipe saved = " << npipe << endl
+			<< "CS saved = " << nCS << endl;
 	}
 	else
 		cerr << "ERROR save" << endl;
@@ -238,6 +288,7 @@ void saveFile(const pipe& p, const CS& cs) // как правильно сохранять?
 
 int MenuOutput()
 {
+
 	pipe p;
 	CS cs;
 
@@ -253,7 +304,7 @@ int MenuOutput()
 		int option;
 		cout << "Choose option 0-7 (int): ";
 		option = getCorrectNumber(0, 7);
-		cout << endl;
+		cout << endl << endl;
 
 		if (option != 0)
 		{
@@ -304,7 +355,7 @@ int MenuOutput()
 		}
 		else
 		{
-			cout << "Goodbye!" << endl;
+			cout << "Goodbye" << endl;
 			return 0;
 		}
 
