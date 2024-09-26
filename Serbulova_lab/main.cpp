@@ -59,7 +59,6 @@ T getPositiveNumber(istream& in = cin)
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
-	cout << "Add pipe" << endl;
 	out << "name: " << p.name << endl
 		<< "d: " << p.d << endl
 		<< "l: " << p.l << endl
@@ -82,7 +81,9 @@ istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сдел
 {
 	cout << "Add pipe" << endl;
 	cout << "name (str) = ";
-	p.name = inputCheck<string>(in);
+	//p.name = inputCheck<string>(in);
+	cin.ignore();
+	getline(in, p.name);
 	cout << "d (int) = ";
 	p.d = getPositiveNumber<int>(in);
 	cout << "l (double) = ";
@@ -98,7 +99,9 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 {
 	cout << "Add CS" << endl;
 	cout << "name (str): ";
-	cs.name = inputCheck<string>(in);
+	//cs.name = inputCheck<string>(in);
+	cin.ignore();
+	getline(in, cs.name);
 	cout << "ws (int) = ";
 	cs.ws = getPositiveNumber<int>(in);
 	cout << "ws in repair (int) = 0 (all ready for use)\n";
@@ -111,7 +114,12 @@ istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сдела
 	return in;
 }
 
-
+bool confirm()
+{
+	cout << "Do you want to rewrite it?" << endl
+		<< "yes - 1           no - 2" << endl;
+	return getCorrectNumber(1, 2);
+}
 
 void addPipe(pipe& p) // add new pipe
 {
@@ -119,31 +127,25 @@ void addPipe(pipe& p) // add new pipe
 		cin >> p;
 	else
 	{
-		cout << "Pipe already exist\n" << endl
-			<< "Do you want to rewrite it?" << endl
-			<< "yes - 1           no - 2" << endl;
-		if (getCorrectNumber(1, 2) == 1)
+		cout << "Pipe already exist\n" << endl;
+		if (confirm)
 			cin >> p;
-		else
-			cout << "Ok" << endl << endl;
+		//else
+		//	cout << "Ok" << endl << endl;
 	}
 }
 
 void addCS(CS& cs) // add new CS
 {
 	if (cs.name == "")
-	{
 		cin >> cs;
-	}
 	else
 	{
-		cout << "CS already exist\n" << endl
-			<< "Do you want to rewrite it?" << endl
-			<< "yes - 1           no - 2" << endl;
-		if (getCorrectNumber(1, 2) == 1)
+		cout << "CS already exist\n" << endl;
+		if (confirm)
 			cin >> cs;
-		else
-			cout << endl << "Ok" << endl << endl;;
+		//else
+		//	cout << endl << "Ok" << endl << endl;;
 	}
 }
 
@@ -359,8 +361,8 @@ int MenuOutput()
 			return 0;
 		}
 
-		cout << endl << "Press Enter to continue";
-		cin.get(); cin.get();
+		//cout << endl << "Press Enter to continue";
+		//cin.get(); cin.get();
 		cout << endl << endl;
 
 	}
