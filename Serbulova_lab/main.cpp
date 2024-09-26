@@ -3,9 +3,6 @@
 #include <fstream>
 using namespace std;
 
-// поменять на getline()?
-
-//properties
 struct pipe
 {
 	string name = "";
@@ -18,7 +15,7 @@ struct CS //Compressor station
 {
 	string name = "";
 	int ws; // workstations 
-	int ws_repair = 0; // // workstations in prepair
+	int ws_work; // // workstations in work
 	double eff; //efficienty;
 
 };
@@ -38,7 +35,7 @@ T inputCheck(istream& in = cin) // check type
 }
 
 template <typename T>
-T getCorrectNumber(T a, T b, bool included = true, istream& in = cin) // check that nu,ber is in range(a,b)
+T getCorrectNumber(T a, T b, bool included = true, istream& in = cin) // check that number is in range(a,b)
 {
 	T x = inputCheck<T>(in);
 	while ( (included && (x<a || x>b))
@@ -51,14 +48,20 @@ T getCorrectNumber(T a, T b, bool included = true, istream& in = cin) // check t
 	return x;
 }
 
-template <typename T> // как проверить красиво на полож число???	
+template <typename T> // как проверить красиво на полож число??? --> никак, сделали через флаг	
 T getPositiveNumber(istream& in = cin)
 {
-	return getCorrectNumber<T>(0, std::numeric_limits<T>::max(),false, in);
+	return getCorrectNumber<T>(0, std::numeric_limits<T>::max(), false, in);
+}
+
+void inputString(istream& in, string& str) // string input for whole line
+{
+	getline(in >> ws, str);
 }
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
 {
+	cout << "Pipe" << endl;
 	out << "name: " << p.name << endl
 		<< "d: " << p.d << endl
 		<< "l: " << p.l << endl
@@ -69,47 +72,40 @@ ostream& operator << (ostream& out, const pipe& p) // output for pipe
 
 ostream& operator << (ostream& out, const CS& cs) // output for CS
 {
+	cout << "CS" << endl;
 	out << "name: " << cs.name << endl
 		<< "ws: " << cs.ws << endl
-		<< "ws in repair: " << cs.ws_repair << endl
+		<< "ws in work: " << cs.ws_work << endl
 		<< "eff: " << cs.eff << endl;
 
 	return out;
 }
 
-istream& operator >> (istream& in, pipe& p) // как тут сделать проверку? -> сделали // intput for pipe
+istream& operator >> (istream& in, pipe& p) // intput for pipe // как тут сделать проверку? -> сделали  inputCheck
 {
-	cout << "Add pipe" << endl;
+	cout << "Pipe" << endl;
 	cout << "name (str) = ";
-	//p.name = inputCheck<string>(in);
-	cin.ignore();
-	getline(in, p.name);
+	inputString(in, p.name);
 	cout << "d (int) = ";
 	p.d = getPositiveNumber<int>(in);
 	cout << "l (double) = ";
 	p.l = getPositiveNumber<double>(in);
-	cout << "repair status: 0 (ready for use)\n" << endl;
-	//cout << "repair (bool: true or 1 - under repair, false or 0 - ready for use) = ";
-	//p.repair = inputCheck<bool>(in);
+	cout << "repair status: 0 (ready for use)" << endl;
 
 	return in;
 }
 
-istream& operator >> (istream& in, CS& cs) // как тут сделать проверку? -> сделали // intput for CS
+istream& operator >> (istream& in, CS& cs) // intput for CS // как тут сделать проверку? -> сделали 
 {
-	cout << "Add CS" << endl;
+	cout << "CS" << endl;
 	cout << "name (str): ";
-	//cs.name = inputCheck<string>(in);
-	cin.ignore();
-	getline(in, cs.name);
+	inputString(in, cs.name);
 	cout << "ws (int) = ";
 	cs.ws = getPositiveNumber<int>(in);
-	cout << "ws in repair (int) = 0 (all ready for use)\n";
-	//cout << "ws in repair (int) = ";
-	//cs.ws_repair = inputCheck<int>(in);
+	cout << "ws in work (int) = ";
+	cs.ws_work = getCorrectNumber<int>(0, cs.ws, true, in);
 	cout << "eff (double) = ";
 	cs.eff = getPositiveNumber<double>(in);
-	cout << endl;
 
 	return in;
 }
@@ -124,42 +120,44 @@ bool confirm()
 void addPipe(pipe& p) // add new pipe
 {
 	if (p.name == "")
+	{
+		cout << "Add object" << endl;
 		cin >> p;
+	}
 	else
 	{
-		cout << "Pipe already exist\n" << endl;
+		cout << "Pipe already exist" << endl;
 		if (confirm)
 			cin >> p;
-		//else
-		//	cout << "Ok" << endl << endl;
 	}
 }
 
 void addCS(CS& cs) // add new CS
 {
 	if (cs.name == "")
+	{
+		cout << "Add object" << endl;
 		cin >> cs;
+	}
 	else
 	{
-		cout << "CS already exist\n" << endl;
+		cout << "CS already exist" << endl;
 		if (confirm)
 			cin >> cs;
-		//else
-		//	cout << endl << "Ok" << endl << endl;;
 	}
 }
 
 void viewAll(const pipe& p, const CS& cs) // print pipe and CS
 {
-	cout << "All objects\n\n";
+	cout << "View all objects" << endl;
 	if (p.name != "")
-		cout << "Pipe\n" << p << endl;
+		cout << p;
 	else
-		cout << "Pipe is not found\n" << endl;
+		cout << "Pipe is not found" << endl;
 	if (cs.name != "")
-		cout << "CS\n" << cs << endl;
+		cout << cs;
 	else
-		cout << "CS is not found\n" << endl;
+		cout << "CS is not found" << endl;
 }
 
 void editPipe(pipe& p) // change status of repair for pipe
@@ -167,10 +165,7 @@ void editPipe(pipe& p) // change status of repair for pipe
 	if (p.name != "")
 	{
 		p.repair = !p.repair;
-		cout << "New repair status for \"" << p.name << "\" pipe: " << p.repair << endl << endl;
-		//cout << "Current repair status for pipe: " << p.repair << endl;
-		//cout << "New status (true or 1 - under repair, false or 0 - ready for use): ";
-		//p.repair = inputCheck<bool>();
+		cout << "New repair status for pipe \"" << p.name << "\": " << p.repair<< endl;
 	}
 	else
 		cout << "Pipe is not found\n" << endl;
@@ -181,9 +176,9 @@ void editCS(CS& cs) // change number of ws in repair for cs
 {
 	if (cs.name != "")
 	{
-		cout << "Current numer of ws in repair for \"" << cs.name << "\" CS: " << cs.ws_repair << endl;
-		cout << "New number (int): ";
-		cs.ws_repair = getCorrectNumber(0, cs.ws);;
+		cout << "Numer of all ws for CS \"" << cs.name << "\" :" << cs.ws << endl;
+		cout << "Input number of ws in work (int): ";
+		cs.ws_work = getCorrectNumber(0, cs.ws);;
 	}
 	else
 		cout << "CS is not found\n" << endl;
@@ -191,7 +186,7 @@ void editCS(CS& cs) // change number of ws in repair for cs
 
 void loadPipe(pipe& p, ifstream& fin)
 {
-	getline(fin, p.name);
+	inputString(fin, p.name);
 	fin >> p.l; 
 	fin >> p.d;
 	fin >> p.repair;
@@ -199,12 +194,11 @@ void loadPipe(pipe& p, ifstream& fin)
 
 void loadCS(CS& cs, ifstream& fin)
 {
-	getline(fin, cs.name);
+	inputString(fin, cs.name);
 	fin >> cs.ws;
-	fin >> cs.ws_repair;
+	fin >> cs.ws_work;
 	fin >> cs.eff;
 }
-
 
 void loadFile(pipe& p, CS& cs) // загружает когда трубы КС отсутсств что делать?
 {
@@ -215,19 +209,30 @@ void loadFile(pipe& p, CS& cs) // загружает когда трубы КС отсутсств что делать?
 	if (fin)
 	{
 		fin >> npipe;
-		if (npipe > 0)
+		if (npipe > 0) // проверка кол-ва труб
 			loadPipe(p, fin);
+		else
+		{
+			pipe empty_p;
+			p = empty_p;
+		}
+
 
 		fin >> nCS;
 		if (nCS > 0)
-			loadCS(cs, fin);
+			loadCS(cs, fin); //проверка кол-ва кс
+		else
+		{
+			CS empty_cs;
+			cs = empty_cs;
+		}
 
 		cout << "Pipe loaded = " << npipe << endl
 			<< "CS loaded = " << nCS << endl;
 	}
 	else
 		cerr << "ERROR load" << endl;
-	fin.close();
+	fin.close(); // см ниже
 }
 
 void savePipe(const pipe& p, ofstream& fout)
@@ -238,149 +243,121 @@ void savePipe(const pipe& p, ofstream& fout)
 		<< p.repair << endl;;
 }
 
-void saveCS(const CS& cs, ofstream& fout)
+void saveCS(const CS& cs, ofstream& fout) 
 {
 	fout << cs.name << endl 
 		<< cs.ws << endl 
-		<< cs.ws_repair << endl 
+		<< cs.ws_work << endl 
 		<< cs.eff << endl;
 }
 
-void saveFile(const pipe& p, const CS& cs) // как правильно сохранять?
+void saveFile(const pipe& p, const CS& cs) // как правильно сохранять? --> либо флагами - любой порядок, либо отображ числа труб и кс - строгий порядок
 {
-	int npipe;
-	int nCS;
+	int npipe = 0;
+	int nCS = 0;
 
 	ofstream fout;
 	fout.open("data.txt", ios::out);
 	if (fout)
 	{
-		if (p.name == "")
-		{
-			npipe = 0;
+		if (p.name == "") // for pipe
 			fout << npipe << endl;
-		}
 		else
 		{
 			npipe = 1;
 			fout << npipe << endl;
 			savePipe(p, fout);
 		}
-			
-		if (cs.name == "")
-		{
-			nCS = 0;
+		if (cs.name == "") // for cs
 			fout << nCS << endl;
-		}
 		else
 		{
 			nCS = 1;
 			fout << nCS << endl;
 			saveCS(cs, fout);
 		}
-
-
 		cout << "Pipe saved = " << npipe << endl
 			<< "CS saved = " << nCS << endl;
 	}
 	else
 		cerr << "ERROR save" << endl;
-	fout.close();
+	fout.close(); // необязательная т.к диструктор разрушает fout после закрытия функции
 }
 
 int MenuOutput()
 {
-
 	pipe p;
 	CS cs;
 
 	while (1)
 	{
-
-		cout << "Menu\n\n"
+		cout << "Menu\n"
 			"1. Add pipe\n2. Add CS\n3. View all objects"
 			"\n4. Edit pipe (repair status) \n5. Edit CS (numder of ws in repair)\n"
 			"6. Save\n7. Download\n"
-			"0. Exit\n" << endl;
-
-		int option;
+			"0. Exit\n";
 		cout << "Choose option 0-7 (int): ";
-		option = getCorrectNumber(0, 7);
-		cout << endl << endl;
 
-		if (option != 0)
+		switch (getCorrectNumber(0, 7))
 		{
-			switch (option)
-			{
-				case 1:
-				{
-					addPipe(p);
-					break;
-				}
-				case 2:
-				{
-					addCS(cs);
-					break;
-				}
-				case 3:
-				{
-					viewAll(p, cs);
-					break;
-				}
-				case 4:
-				{
-					editPipe(p);
-					break;
-				}
-				case 5:
-				{
-					editCS(cs);
-					break;
-				}
-				case 6:
-				{
-					saveFile(p, cs);
-					break;
-				}
-				case 7:
-				{
-					loadFile(p, cs);
-					break;
-				}
-				default:
-				{
-					cerr << "ERROR unexpected" << endl << "End of program" << endl;
-					return 0;
-					break;
-				}
-			}
-		}
-		else
+		case 0:
 		{
 			cout << "Goodbye" << endl;
 			return 0;
 		}
-
+		case 1:
+		{
+			addPipe(p);
+			break;
+		}
+		case 2:
+		{
+			addCS(cs);
+			break;
+		}
+		case 3:
+		{
+			viewAll(p, cs);
+			break;
+		}
+		case 4:
+		{
+			editPipe(p);
+			break;
+		}
+		case 5:
+		{
+			editCS(cs);
+			break;
+		}
+		case 6:
+		{
+			saveFile(p, cs);
+			break;
+		}
+		case 7:
+		{
+			loadFile(p, cs);
+			break;
+		}
+		default:
+		{
+			cerr << "ERROR unexpected" << endl << "Prigrammer forgot to use getCorrectNumber function :)" << endl;
+			return 0;
+		}
+		}
 		//cout << endl << "Press Enter to continue";
 		//cin.get(); cin.get();
-		cout << endl << endl;
-
+		cout << endl;
 	}
 }
 
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-
 	cout << "Привет Hello" << endl;
-
-	//unsigned int a = 0;
-	//cout << a;
-
-	//return 0;
 	
 	MenuOutput();
-
 
 	return 0;
 }
