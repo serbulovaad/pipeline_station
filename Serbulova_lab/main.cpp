@@ -54,9 +54,17 @@ T getPositiveNumber(istream& in = cin)
 	return getCorrectNumber<T>(0, std::numeric_limits<T>::max(), false, in);
 }
 
-void inputString(istream& in, string& str) // string input for whole line
+string inputString(istream& in, const string& exeption = "") // string input for whole line
 {
+	string str;
 	getline(in >> ws, str);
+	if (exeption != "")
+		while (str == exeption)
+		{
+			cerr << "ERROR wrong name: " << exeption << " --> try again: ";
+			getline(in >> ws, str);
+		}
+	return str;
 }
 
 ostream& operator << (ostream& out, const pipe& p) // output for pipe
@@ -85,7 +93,7 @@ istream& operator >> (istream& in, pipe& p) // intput for pipe // как тут сделат
 {
 	cout << "Pipe" << endl;
 	cout << "name (str) = ";
-	inputString(in, p.name);
+	p.name = inputString(in, "pipe");
 	cout << "d (int) = ";
 	p.d = getPositiveNumber<int>(in);
 	cout << "l (double) = ";
@@ -99,7 +107,7 @@ istream& operator >> (istream& in, CS& cs) // intput for CS // как тут сделать п
 {
 	cout << "CS" << endl;
 	cout << "name (str): ";
-	inputString(in, cs.name);
+	cs.name = inputString(in, "CS");
 	cout << "ws (int) = ";
 	cs.ws = getPositiveNumber<int>(in);
 	cout << "ws in work (int) = ";
@@ -186,7 +194,7 @@ void editCS(CS& cs) // change number of ws in repair for cs
 
 void loadPipe(pipe& p, ifstream& fin)
 {
-	inputString(fin, p.name);
+	p.name = inputString(fin);
 	fin >> p.l; 
 	fin >> p.d;
 	fin >> p.repair;
@@ -194,7 +202,7 @@ void loadPipe(pipe& p, ifstream& fin)
 
 void loadCS(CS& cs, ifstream& fin)
 {
-	inputString(fin, cs.name);
+	cs.name = inputString(fin);
 	fin >> cs.ws;
 	fin >> cs.ws_work;
 	fin >> cs.eff;
@@ -234,6 +242,7 @@ void loadFile(pipe& p, CS& cs) // загружает когда трубы  — отсутсств что делать?
 		cerr << "ERROR load" << endl;
 	fin.close(); // см ниже
 }
+
 
 void savePipe(const pipe& p, ofstream& fout)
 {
@@ -283,6 +292,8 @@ void saveFile(const pipe& p, const CS& cs) // как правильно сохран€ть? --> либо 
 		cerr << "ERROR save" << endl;
 	fout.close(); // необ€зательна€ т.к диструктор разрушает fout после закрыти€ функции
 }
+
+
 
 int MenuOutput()
 {
@@ -340,6 +351,11 @@ int MenuOutput()
 			loadFile(p, cs);
 			break;
 		}
+		case -1:
+		{
+			cout << "\n:)\n-1 is not 1-7" << endl;
+			break;
+		}
 		default:
 		{
 			cerr << "ERROR unexpected" << endl << "Prigrammer forgot to use getCorrectNumber function :)" << endl;
@@ -356,8 +372,146 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 	cout << "ѕривет Hello" << endl;
-	
+
 	MenuOutput();
 
 	return 0;
 }
+
+//void saveFile(const pipe& p, const CS& cs) // как правильно сохран€ть? --> либо флагами - любой пор€док, либо отображ числа труб и кс - строгий пор€док
+//{
+//	int npipe = 0;
+//	int nCS = 0;
+//
+//	ofstream fout;
+//	fout.open("data.txt", ios::out);
+//	if (fout)
+//	{
+//		if (p.name == "") // for pipe
+//			fout << npipe << endl;
+//		else
+//		{
+//			npipe = 1;
+//			fout << npipe << endl;
+//			savePipe(p, fout);
+//		}
+//		if (cs.name == "") // for cs
+//			fout << nCS << endl;
+//		else
+//		{
+//			nCS = 1;
+//			fout << nCS << endl;
+//			saveCS(cs, fout);
+//		}
+//		cout << "Pipe saved = " << npipe << endl
+//			<< "CS saved = " << nCS << endl;
+//	}
+//	else
+//		cerr << "ERROR save" << endl;
+//	fout.close(); // необ€зательна€ т.к диструктор разрушает fout после закрыти€ функции
+//}
+
+//void loadAllPipe(pipe& p)
+//{
+//	int npipe{};
+//
+//	ifstream fin;
+//	fin.open("data.txt", ios::in);
+//	if (fin)
+//	{
+//		while (fin)
+//		{
+//			if (inputString(fin) == "pipe")
+//			{
+//				fin >> npipe;
+//				if (npipe > 0) // проверка кол-ва труб
+//					loadPipe(p, fin);
+//				else
+//				{
+//					pipe empty_p;
+//					p = empty_p;
+//				}
+//			}
+//		}
+//	}
+//	else
+//		cerr << "ERROR load pipe" << endl;
+//	fin.close();
+//	cout << "Pipe loaded = " << npipe << endl;
+//}
+//
+//void loadAllCS(CS& cs)
+//{
+//	int nCS{};
+//
+//	ifstream fin;
+//	fin.open("data.txt", ios::in);
+//	if (fin)
+//	{
+//		while (fin)
+//		{
+//			if (inputString(fin) == "CS")
+//			{
+//				fin >> nCS;
+//				if (nCS > 0)
+//					loadCS(cs, fin); //проверка кол-ва кс
+//				else
+//				{
+//					CS empty_cs;
+//					cs = empty_cs;
+//				}
+//
+//			}
+//		}
+//	}
+//	else
+//		cerr << "ERROR load CS" << endl;
+//	fin.close();
+//	cout << "CS loaded = " << nCS << endl;
+//}
+//
+//void loadFile(pipe& p, CS& cs) // загружает когда трубы  — отсутсств что делать?
+//{
+//	loadAllPipe(p);
+//	loadAllCS(cs);
+//}
+
+
+
+//void saveFile(const pipe& p, const CS& cs) // как правильно сохран€ть? --> либо флагами - любой пор€док, либо отображ числа труб и кс - строгий пор€док
+//{
+//	int npipe = 0;
+//	int nCS = 0;
+//
+//	ofstream fout;
+//	fout.open("data.txt", ios::out);
+//	if (fout)
+//	{
+//
+//		fout << "pipe" << endl;
+//		if (p.name == "") // for pipe
+//			fout << npipe << endl;
+//		else
+//		{
+//			npipe = 1;
+//			fout << npipe << endl;
+//			savePipe(p, fout);
+//		}
+//
+//
+//		fout << "CS" << endl;
+//		if (cs.name == "") // for cs
+//			fout << nCS << endl;
+//		else
+//		{
+//			nCS = 1;
+//			fout << nCS << endl;
+//			saveCS(cs, fout);
+//		}
+//		cout << "Pipe saved = " << npipe << endl
+//			<< "CS saved = " << nCS << endl;
+//	}
+//	else
+//		cerr << "ERROR save" << endl;
+//	fout.close(); // необ€зательна€ т.к диструктор разрушает fout после закрыти€ функции
+//}
