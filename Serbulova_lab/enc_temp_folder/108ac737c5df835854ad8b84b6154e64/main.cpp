@@ -93,7 +93,7 @@ istream& operator >> (istream& in, pipe& p) // intput for pipe // как тут сделат
 {
 	cout << "Pipe" << endl;
 	cout << "name (str) = ";
-	p.name = inputString(in);
+	p.name = inputString(in, "pipe");
 	cout << "d (int) = ";
 	p.d = getPositiveNumber<int>(in);
 	cout << "l (double) = ";
@@ -107,7 +107,7 @@ istream& operator >> (istream& in, CS& cs) // intput for CS // как тут сделать п
 {
 	cout << "CS" << endl;
 	cout << "name (str): ";
-	cs.name = inputString(in);
+	cs.name = inputString(in, "CS");
 	cout << "ws (int) = ";
 	cs.ws = getPositiveNumber<int>(in);
 	cout << "ws in work (int) = ";
@@ -216,21 +216,31 @@ void loadFile(pipe& p, CS& cs) // загружает
 	fin.open("data.txt", ios::in);
 	if (fin)
 	{
-			p = {};
-			cs = {};
 		fin >> npipe;
 		if (npipe > 0) // проверка кол-ва труб
 			loadPipe(p, fin);
+		else
+		{
+			pipe empty_p;
+			p = empty_p;
+		}
+
+
 		fin >> nCS;
 		if (nCS > 0)
 			loadCS(cs, fin); //проверка кол-ва кс
+		else
+		{
+			CS empty_cs;
+			cs = empty_cs;
+		}
 
 		cout << "Pipe loaded = " << npipe << endl
 			<< "CS loaded = " << nCS << endl;
 	}
 	else
 		cerr << "ERROR load" << endl;
-	fin.close(); // см нижеq
+	fin.close(); // см ниже
 }
 
 
@@ -282,7 +292,7 @@ void saveFile(const pipe& p, const CS& cs) // как правильно сохранять? --> либо 
 	}
 	else
 		cerr << "ERROR save" << endl;
-	fout.close(); // необязательная т.к деструктор разрушает fout после закрытия функции
+	fout.close(); // необязательная т.к диструктор разрушает fout после закрытия функции
 }
 
 
