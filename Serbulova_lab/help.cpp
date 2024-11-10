@@ -60,9 +60,8 @@ T getPositiveNumber(istream& in)
 template int getPositiveNumber(istream& in);
 template double getPositiveNumber(istream& in);
 
-bool confirm()
+bool confirm(string message)
 {
-	cout << "Do you want to do it?" << endl
-		<< "yes - 1           no - 2" << endl;
+	cout << message <<"\n1.yes\n2.no" << endl;
 	return getCorrectNumber(1, 2);
 }

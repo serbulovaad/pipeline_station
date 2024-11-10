@@ -64,7 +64,7 @@ CS CS::addCS() // add new CS
 	return cs;
 }
 
-void CS::editCS() // change number of ws in repair for cs
+void CS::editCS() // change number of ws in in_repair for cs
 {
 	if (ws_work < ws)
 		ws_work += 1;

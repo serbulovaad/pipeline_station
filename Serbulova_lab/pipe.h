@@ -11,7 +11,7 @@ private:
 	std::string name;
 	double l; // length;
 	int d; // diameter;
-	bool repair; // 0 False - ready for use, 1 True - under repair
+	bool in_repair; // 0 False - ready for use, 1 True - under in_repair
 
 public:
 	pipe();
@@ -27,6 +27,14 @@ public:
 	int getID()
 	{
 		return ID;
+	}
+	std::string getName()
+	{
+		return name;
+	}
+	bool getInRepair()
+	{
+		return in_repair;
 	}
 };
 

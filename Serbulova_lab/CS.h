@@ -28,5 +28,13 @@ public:
 	{
 		return ID;
 	}
+	std::string getName()
+	{
+		return name;
+	}
+	double getPercentWsInUse()
+	{
+		return ws_work/ws*100;
+	}
 };
 

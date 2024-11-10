@@ -20,7 +20,7 @@ T getCorrectNumber(T a, T b, bool included = true, std::istream& in = std::cin);
 template <typename T>
 T getPositiveNumber(std::istream& in = std::cin);
 
-bool confirm();
+bool confirm(std::string);
 
 // класс 
 class redirect_output_wrapper
