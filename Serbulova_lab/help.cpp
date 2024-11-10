@@ -10,10 +10,11 @@ string inputString(istream& in) // string input for whole line
 	/*if (exeption != "")
 		while (str == exeption)
 		{
-			cerr << "ERROR wrong name " << exeption << " --> try again: ";
+			cout << "ERROR wrong name " << exeption << " --> try again: ";
+			cerr << str << endl;
 			getline(in >> ws, str);
 		}*/
-	cerr << str; // LOGGING!!!!!!!
+	cerr << str << endl; // LOGGING!!!!!!!
 	return str;
 }
 
@@ -26,15 +27,16 @@ T inputNumber(istream& in) // check type
 	{
 		in.clear();
 		in.ignore(10000, '\n');
-		cerr << "ERROR wrong type --> try again: ";
+		cout << "ERROR wrong type --> try again: ";
+		cerr << x << endl; // LOGGING!!!!!!!
 	}
-	cerr << x; // LOGGING!!!!!!!
+	cerr << x << endl; // LOGGING!!!!!!!
 	return x;
 }
 template int inputNumber(istream& in);
 template double inputNumber(istream& in);
 
-template <typename T>
+template <typename T = int>
 T getCorrectNumber(T a, T b, bool included, istream& in) // check that number is in range(a,b)
 {
 	T x = inputNumber<T>(in);
@@ -42,13 +44,13 @@ T getCorrectNumber(T a, T b, bool included, istream& in) // check that number is
 		|| (!included && (x <= a || x >= b)))
 	{
 		string str_included = included ? "= " : " ";
-		cerr << "ERROR wrong number: min >" << str_included << a << " and max <" << str_included << b << " --> try again: ";
+		cout << "ERROR wrong number: min >" << str_included << a << " and max <" << str_included << b << " --> try again: ";
 		x = inputNumber<T>(in);
 	}
 	return x;
 }
-template int getCorrectNumber(int a, int b, bool included, istream& in);
-template double getCorrectNumber(double a, double b, bool included, istream& in);
+template int getCorrectNumber<int>(int a, int b, bool included, istream& in);
+template double getCorrectNumber<double>(double a, double b, bool included, istream& in);
 
 template <typename T> // как проверить красиво на полож число??? --> никак, сделали через флаг	
 T getPositiveNumber(istream& in)
@@ -57,7 +59,6 @@ T getPositiveNumber(istream& in)
 }
 template int getPositiveNumber(istream& in);
 template double getPositiveNumber(istream& in);
-
 
 bool confirm()
 {

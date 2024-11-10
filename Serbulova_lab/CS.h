@@ -23,10 +23,10 @@ public:
 	friend std::ofstream& operator << (std::ofstream& fout, const CS& cs);
 	friend std::ifstream& operator >> (std::ifstream& fin, CS& cs);
 
+	void editCS();
 	int getID()
 	{
 		return ID;
 	}
-	void editCS();
 };
 

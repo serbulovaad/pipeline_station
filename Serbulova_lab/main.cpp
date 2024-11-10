@@ -2,61 +2,83 @@
 #include "help.h"
 #include "pipe.h"
 #include "CS.h"
+#include "main.h"
 using namespace std;
+using namespace chrono;
+
+template <typename T>
+bool isMapEmpty(const unordered_map<int, T>& map)
+{
+	if (map.size() == 0) return true;
+	else return false;
+}
+
+void coutNoObjectFound() { cout << "No objects found :(" << endl; }
 
 template <typename T>
 void printMap(const unordered_map<int, T>& map)
 {
-	//for (const auto& val : map)
 	for (auto& [id, val] : map)
-		cout << val << endl;
+		cout << val;
 }
 
-template <typename T>
-T selectObject(const unordered_map<int, T>& map)
+template<typename T>
+void saveMap(std::ofstream& fout, const std::unordered_map<int, T>& map)
 {
-	int id = inputNumber();
-	if (iter != map.end())
-		cout << map[id] << endl;
-	else cout << "No object with id = " << id << endl;
+	fout << map.size() << endl;
+	for (auto& [id, val] : map)
+	{
+		fout << id;
+		fout << val;
+	}
+}
 
+template<typename T>
+void loadMap(std::ifstream& fin, std::unordered_map<int, T>& map)
+{
+	map.clear();
+	int sizemap;
+	fin >> sizemap;
+	for (int i = 1; i <= sizemap; i++)
+	{
+		fin >> id;
+		map[id] = val;
+	}
 }
 
 void saveFile(const unordered_map<int, pipe>& pipemap, const unordered_map<int, CS>& csmap) // как правильно сохранять? --> либо флагами - любой порядок, либо отображ числа труб и кс - строгий порядок
 {
+	cout << "Enter file name: ";
+	string filename = inputString();
 	ofstream fout;
-	fout.open("data.txt", ios::out);
+	fout.open(filename + ".txt", ios::out);
 	if (fout)
-	{//???????????????????????
-		for (auto& map : (pipemap, csmap) )
-			fout << map.size();
-			for (auto& [id, val] : pipemap)
-				fout << val;
+	{
+		saveMap(fout, pipemap);
+		saveMap(fout, csmap);
 		fout.close();
 		cout << "Pipe saved = " << pipemap.size() << endl
 			<< "CS saved = " << csmap.size() << endl;
 	}
-	else cerr << "ERROR save" << endl;
+	else cout << "ERROR save" << endl;
 }
 
 void loadFile(unordered_map<int, pipe>& pipemap, unordered_map<int, CS>& csmap)
 {
+	cout << "Enter file name: ";
+	string filename = inputString();
 	ifstream fin;
-	fin.open("data.txt", ios::in);
+	fin.open(filename + ".txt", ios::in);
 	if (fin)
-	{ // лучше clear и заново вводить или создать новые map и потом их присвоить старым?
-		for (auto& map : { pipemap, csmap })
-			map.clear;
-			int sizemap;
-			fin >> sizemap;
-			for (int i = 1; i <= sizemap; i++)
-				fin >> map[i];
+	{ // лучше clear и заново вводить или создать новые map и потом их присвоить старым? -> clear чтобы не путать ID
+		loadMap(fin, pipemap);
+		loadMap(fin, csmap);
 		fin.close();
 		cout << "Pipe loaded = " << pipemap.size() << endl
 			<< "CS loaded = " << csmap.size() << endl;
 	}
 	else
-		cerr << "ERROR load" << endl;
+		cout << "ERROR load" << endl;
 }
 
 int MenuOutput()
@@ -82,31 +104,38 @@ int MenuOutput()
 		}
 		case 1:
 		{
-			pipe p;
-			pipemap.emplace(p.getID(), p.addPipe());
+			pipe p = pipe::addPipe();
+			pipemap.emplace(p.getID(), p);
 			break;
 		}
 		case 2:
 		{
-			CS cs;
-			csmap.emplace(cs.getID(), cs.addCS());
+			CS cs = CS::addCS();
+			csmap.emplace(cs.getID(), cs);
 			break;
 		}
 		case 3:
 		{
 			cout << "View all objects" << endl;
-			for (auto& map : { pipemap, csmap })
-				printMap(map)
+			printMap(pipemap);
+			printMap(csmap);
+			if (isMapEmpty(pipemap) and isMapEmpty(csmap)) coutNoObjectFound();
 			break;
 		}
 		case 4:
 		{
-			//p.editPipe(p);
+			for (auto& [id, p] : pipemap)
+				p.editPipe();
+			if (!isMapEmpty(pipemap)) cout << "Repair status of all pipes were edited (inverted)!" << endl;
+			else coutNoObjectFound();
 			break;
 		}
 		case 5:
 		{
-			//cs.editCS(cs);
+			for (auto& [id, cs] : csmap)
+				cs.editCS();
+			if (!isMapEmpty(csmap)) cout << "Edited number of ws in work (+1) for all cs'es!" << endl;
+			else coutNoObjectFound();
 			break;
 		}
 		case 6:
@@ -127,7 +156,7 @@ int MenuOutput()
 		}
 		//cout << endl << "Press Enter to continue";
 		//cin.get(); cin.get();
-		cout << endl;
+		//cout << endl;
 	}
 }
 
@@ -135,13 +164,15 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 	cout << "Привет Hello" << endl;
-	
-	unordered_map<int, int> map;
-	map = { {1, 12}, {2,23}, {3,36} };
 
-	//std::system("2<log.txt");
+	//логирование в отдельный файл
+	redirect_output_wrapper cerr_out(cerr);
+	string time = std::format("{:%d_%m_%Y %H_%M_%OS}", system_clock::now());
+	ofstream logfile("log_" + time + ".txt");
+	if (logfile)
+		cerr_out.redirect(logfile);
 
-	//MenuOutput();
+	MenuOutput();
 
 	return 0;
 }

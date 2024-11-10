@@ -7,14 +7,13 @@ int pipe::MaxID = 0;
 pipe::pipe()
 {
 	ID = ++MaxID;
-	string name = "";
-	bool repair = false;
+	name = "";
+	repair = 0;
 };
 
 ostream& operator<<(std::ostream& out, const pipe& p)
 {
-	cout << "Pipe" << endl
-		<< "ID = " << p.ID << endl;
+	cout << "pipe ID = " << p.ID << endl;
 	out << "name: " << p.name << endl
 		<< "d: " << p.d << endl
 		<< "l: " << p.l << endl
@@ -25,8 +24,7 @@ ostream& operator<<(std::ostream& out, const pipe& p)
 
 istream& operator>>(istream& in, pipe& p)
 {
-	cout << "Pipe" << endl;
-	cout << "ID = " << p.ID << endl;
+	cout << "pipe ID = " << p.ID << endl;
 	cout << "name (str) = ";
 	p.name = inputString(in);
 	cout << "d (int) = ";
@@ -40,10 +38,9 @@ istream& operator>>(istream& in, pipe& p)
 
 ofstream& operator << (ofstream& fout, const pipe& p) // output for CS
 {
-	fout << p.ID << endl
-		<< p.name << endl
-		<< p.l << endl
+	fout << p.name << endl // убрали ID чтобы считывать его обычным fout'ом в main
 		<< p.d << endl
+		<< p.l << endl
 		<< p.repair << endl;;
 
 	return fout;
@@ -51,10 +48,9 @@ ofstream& operator << (ofstream& fout, const pipe& p) // output for CS
 
 ifstream& operator >> (ifstream& fin, pipe& p)
 {
-	fin >> p.ID;
-	p.name = inputString(fin);
-	fin >> p.l;
+	p.name = inputString(fin); // убрали ID чтобы считывать его обычным fin'ом в main
 	fin >> p.d;
+	fin >> p.l;
 	fin >> p.repair;
 
 	return fin;
@@ -69,12 +65,5 @@ pipe pipe::addPipe() // add new pipe
 
 void pipe::editPipe() // change status of repair for pipe
 {
-	if (name != "")
-	{
 		repair = !repair;
-		cout << "New repair status for pipe \"" << name << "\": " << repair << endl;
-	}
-	else
-		cout << "Pipe is not found" << endl;
-
 }
