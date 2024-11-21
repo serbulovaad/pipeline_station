@@ -21,7 +21,7 @@ ostream& operator<<(std::ostream& out, const pipe& p)
 
 	return out;
 }
-
+ 
 istream& operator>>(istream& in, pipe& p)
 {
 	cout << "pipe ID = " << p.ID << endl;
@@ -38,7 +38,8 @@ istream& operator>>(istream& in, pipe& p)
 
 ofstream& operator << (ofstream& fout, const pipe& p) // output for CS
 {
-	fout << p.name << endl // убрали ID чтобы считывать его обычным fout'ом в main
+	fout << p.ID << endl
+		<< p.name << endl // убрали ID чтобы считывать его обычным fout'ом в main
 		<< p.d << endl
 		<< p.l << endl
 		<< p.in_repair << endl;;
@@ -48,7 +49,8 @@ ofstream& operator << (ofstream& fout, const pipe& p) // output for CS
 
 ifstream& operator >> (ifstream& fin, pipe& p)
 {
-	p.name = inputString(fin); // убрали ID чтобы считывать его обычным fin'ом в main
+	fin >> p.ID;
+	getline(fin >> ws, p.name); // убрали ID чтобы считывать его обычным fin'ом в main
 	fin >> p.d;
 	fin >> p.l;
 	fin >> p.in_repair;
@@ -61,6 +63,11 @@ pipe pipe::addPipe() // add new pipe
 	pipe p;
 	cin >> p;
 	return p;
+}
+
+void pipe::resetMaxID()
+{
+	MaxID = 0;
 }
 
 void pipe::editPipe() // change status of in_repair for pipe

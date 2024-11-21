@@ -17,6 +17,7 @@ public:
 	pipe();
 
 	static pipe addPipe(); //не к конкретной трубе
+	static void resetMaxID();
 
 	friend std::ostream& operator << (std::ostream& out, const pipe& p); 
 	friend std::istream& operator >> (std::istream& in, pipe& p);

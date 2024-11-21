@@ -39,7 +39,8 @@ istream& operator >> (istream & in, CS & cs) // intput for CS // как тут сделать
 
 ofstream& operator << (ofstream& fout, const CS& cs) // output for CS
 {
-	fout << cs.name << endl
+	fout << cs.ID << endl
+		<< cs.name << endl
 		<< cs.ws << endl
 		<< cs.ws_work << endl
 		<< cs.eff << endl;
@@ -49,7 +50,8 @@ ofstream& operator << (ofstream& fout, const CS& cs) // output for CS
 
 ifstream& operator >> (ifstream& fin, CS& cs)
 {
-	cs.name = inputString(fin);
+	fin >> cs.ID;
+	getline(fin >> ws, cs.name);
 	fin >> cs.ws;
 	fin >> cs.ws_work;
 	fin >> cs.eff;
@@ -64,8 +66,29 @@ CS CS::addCS() // add new CS
 	return cs;
 }
 
-void CS::editCS() // change number of ws in in_repair for cs
+void CS::resetMaxID()
+{
+	MaxID = 0;
+}
+
+bool CS::runWS() // change number of ws in in_repair for cs
 {
 	if (ws_work < ws)
-		ws_work += 1;
+	{
+		ws_work++;
+		return 1;
+	}
+	else
+		return 0;
+}
+
+bool CS::stopWS() // change number of ws in in_repair for cs
+{
+	if (ws_work > 0)
+	{
+		ws_work--;
+		return 1;
+	}
+	else
+		return 0;
 }

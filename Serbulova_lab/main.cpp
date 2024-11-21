@@ -10,7 +10,10 @@ template <typename T>
 void printMap(const unordered_map<int, T>& map)
 {
 	for (auto& [id, val] : map)
+	{
+		cout << id;
 		cout << val;
+	}
 }
 
 template<typename T>
@@ -19,7 +22,6 @@ void saveMap(std::ofstream& fout, const std::unordered_map<int, T>& map)
 	fout << map.size() << endl;
 	for (auto& [id, val] : map)
 	{
-		fout << id;
 		fout << val;
 	}
 }
@@ -28,13 +30,13 @@ template<typename T>
 void loadMap(std::ifstream& fin, std::unordered_map<int, T>& map)
 {
 	map.clear();
+	T::resetMaxID();
 	int sizemap;
 	fin >> sizemap;
 	for (int i = 1; i <= sizemap; i++)
 	{
-		int id; fin >> id;
-		T val; fin >> val;
-		map[id] = val;
+		T val; fin >> val;			
+		map.emplace(val.getID(),val);
 	}
 }
 
@@ -43,7 +45,7 @@ void saveFile(const unordered_map<int, pipe>& pipemap, const unordered_map<int, 
 	cout << "Enter file name: ";
 	string filename = inputString();
 	ofstream fout;
-	fout.open(filename + ".txt", ios::out);
+	fout.open(filename, ios::out);
 	if (fout)
 	{
 		saveMap(fout, pipemap);
@@ -60,7 +62,7 @@ void loadFile(unordered_map<int, pipe>& pipemap, unordered_map<int, CS>& csmap)
 	cout << "Enter file name: ";
 	string filename = inputString();
 	ifstream fin;
-	fin.open(filename + ".txt", ios::in);
+	fin.open(filename, ios::in);
 	if (fin)
 	{ // лучше clear и заново вводить или создать новые map и потом их присвоить старым? -> clear чтобы не путать ID
 		loadMap(fin, pipemap);
@@ -158,11 +160,12 @@ template<typename T>
 unordered_set<int> selectByChosenID(unordered_map<int, T>& map, unordered_set<int>& set = {})
 {
 	unordered_set<int> res;
-	cout << "Enter amount of chosen ID: "; int count = getCorrectNumber<int>(1, map.size());
-	cout << "Enter all ID: " << endl;
-	for (int i = 1; i <= count; i++)
+	cout << "Enter all ID\nTo stop enter 0" << endl;
+	while(1)
 	{
 		int id = inputNumber<int>();
+		if (id == 0)
+			break;
 		if (set.size() == 0)
 		{	if (map.contains(id)) res.emplace(id);	}
 		else
@@ -188,16 +191,37 @@ void editMap(unordered_map<int, pipe>& map)
 
 void editMap(unordered_map<int, CS>& map)
 {
-	for (auto& [id, cs] : map)
-		cs.editCS();
-	if (!map.empty()) cout << "Edited number of ws in work (+1) for all cs'es!" << endl;
+	if (!map.empty()) cout << "Do you want to run or stop 1 ws for all CS?\n1. Run\n2. Stop" << endl;
+	else coutNoObjectFound();
+	switch (getCorrectNumber(1, 2))
+	{
+	case 1:
+	{
+		for (auto& [id, cs] : map)
+			if (!cs.runWS())
+				cout << "Cannot change CS " << id << endl;
+		break;
+	}
+	case 2:
+	{
+		for (auto& [id, cs] : map)
+			if (!cs.stopWS())
+				cout << "Cannot change CS " << id << endl;
+
+		break;
+	}
+	default:
+		break;
+	}
+
+	if (!map.empty()) cout << "Well done!" << endl;
 	else coutNoObjectFound();
 }
 
 template<typename T>
 void editSelected(unordered_map<int, T>& map, unordered_set<int>& set)
 {
-	cout << "Choose what to do with selected objects:\n1. Print\n2. Edit\n3. Delete" << endl;
+	cout << "Choose what to do with selected objects:\n1. Print\n2. Edit\n3. Delete\0. Exit" << endl;
 	switch (getCorrectNumber<int>(1,3))
 	{
 	case 1:
@@ -217,6 +241,11 @@ void editSelected(unordered_map<int, T>& map, unordered_set<int>& set)
 			map.erase(id);
 		break;
 	}
+	case 0:
+	{
+		if (confirm("All your filters will be gone. Are you sure?"))
+			break;
+	}
 	default:
 		break;
 	}
@@ -226,7 +255,12 @@ template<typename T>
 void selectObjects(unordered_map<int, T>& map)
 {
 	unordered_set<int> res;
-	cout << "You want to select by ID or by Filter?\n1. ID\n2. Filter" << endl;
+	if (map.empty())
+	{
+		coutNoObjectFound();
+		return;
+	}
+	cout << "You want to select by ID or by Filter?\n1. ID\n2. Filter" << endl ;
 	if (getCorrectNumber(1, 2) == 1) //ID
 		res = selectByChosenID(map, res);
 	else // Filter
@@ -244,6 +278,22 @@ void selectObjects(unordered_map<int, T>& map)
 	else coutNoObjectFound();
 }
 
+void deleteAll(unordered_map<int, pipe>& pipemap, unordered_map<int, CS>& csmap)
+{
+	if (pipemap.empty() && csmap.empty())
+	{
+		coutNoObjectFound();
+		return;
+	}
+	if (confirm("Are you sure?"))
+	{
+		pipemap.clear();
+		csmap.clear();
+		cout << "All objects are deleted" << endl;
+	}
+	return;
+}
+
 int MenuOutput()
 {
 	unordered_map<int, pipe> pipemap;
@@ -256,7 +306,7 @@ int MenuOutput()
 			"4. Edit pipes\n5. Edit CSs\n"
 			"6. Save\n7. Download\n8. Delete All\n"
 			"0. Exit\n";
-		cout << "Choose option 0-7 (int): ";
+		cout << "Choose option: ";
 
 		switch (getCorrectNumber(0, 8))
 		{
@@ -266,7 +316,7 @@ int MenuOutput()
 			return 0;
 		}
 		case 1:
-		{
+		{  
 			pipe p = pipe::addPipe();
 			pipemap.emplace(p.getID(), p);
 			break;
@@ -275,7 +325,7 @@ int MenuOutput()
 		{
 			CS cs = CS::addCS();
 			csmap.emplace(cs.getID(), cs);
-			break;
+			break; 
 		}
 		case 3:
 		{
@@ -310,12 +360,7 @@ int MenuOutput()
 		}
 		case 8:
 		{
-			if (confirm("Are you sure?"))
-			{
-				pipemap.clear();
-				csmap.clear();
-				cout << "All objects are deleted" << endl;
-			}
+			deleteAll(pipemap, csmap);
 			break;
 		}
 		default:
@@ -326,7 +371,7 @@ int MenuOutput()
 		}
 		//cout << endl << "Press Enter to continue";
 		//cin.get(); cin.get();
-		//cout << endl;
+		cout << endl;
 	}
 }
 

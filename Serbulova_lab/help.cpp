@@ -3,7 +3,6 @@ using namespace std;
 
 string inputString(istream& in) // string input for whole line
 //string inputString(istream& in, const string& exeption)
-
 {
 	string str;
 	getline(in >> ws, str);
@@ -62,6 +61,6 @@ template double getPositiveNumber(istream& in);
 
 bool confirm(string message)
 {
-	cout << message <<"\n1.yes\n2.no" << endl;
-	return getCorrectNumber(1, 2);
+	cout << message <<"\n0.no\n1.yes" << endl;
+	return getCorrectNumber(0, 1);
 }

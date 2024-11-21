@@ -17,13 +17,16 @@ public:
 	CS();
 	
 	static CS addCS();
+	static void resetMaxID();
 
 	friend std::ostream& operator << (std::ostream& out, const CS& cs);
 	friend std::istream& operator >> (std::istream& in, CS& cs);
 	friend std::ofstream& operator << (std::ofstream& fout, const CS& cs);
 	friend std::ifstream& operator >> (std::ifstream& fin, CS& cs);
 
-	void editCS();
+	bool runWS();
+	bool stopWS();
+
 	int getID()
 	{
 		return ID;
@@ -34,7 +37,7 @@ public:
 	}
 	double getPercentWsInUse()
 	{
-		return ws_work/ws*100;
+		return (double)ws_work/ws*100;
 	}
 };
 
