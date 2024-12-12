@@ -13,12 +13,11 @@ pipe::pipe()
 
 ostream& operator<<(std::ostream& out, const pipe& p)
 {
-	cout << "pipe ID = " << p.ID << endl;
-	out << "name: " << p.name << endl
-		<< "d: " << p.d << endl
-		<< "l: " << p.l << endl
-		<< "in_repair status: " << p.in_repair << endl;
-
+	cout << "ID = " << p.ID << endl;
+	 out << "name = " << p.name << endl
+		 << "d = " << p.d << endl
+		 << "l = " << p.l << endl
+		 << "in_repair status = " << p.in_repair << endl;
 	return out;
 }
  
@@ -70,7 +69,13 @@ void pipe::resetMaxID()
 	MaxID = 0;
 }
 
-void pipe::editPipe() // change status of in_repair for pipe
+void pipe::editPipe(int status) // change status of in_repair for pipe
 {
+	if (status == 2)
 		in_repair = !in_repair;
+	else 
+		if ((status == 0) or (status == 1)) in_repair = status;
 }
+
+
+

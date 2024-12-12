@@ -12,6 +12,8 @@ private:
 	double l; // length;
 	int d; // diameter;
 	bool in_repair; // 0 False - ready for use, 1 True - under in_repair
+	int inID;
+	int outID;
 
 public:
 	pipe();
@@ -24,7 +26,7 @@ public:
 	friend std::ofstream& operator << (std::ofstream& fout, const pipe& p);
 	friend std::ifstream& operator >> (std::ifstream& fin, pipe& p);
 
-	void editPipe();
+	void editPipe(int status = 2);
 	int getID()
 	{
 		return ID;

@@ -22,6 +22,10 @@ T getPositiveNumber(std::istream& in = std::cin);
 
 bool confirm(std::string);
 
+void coutNoObjectFound();
+
+void coutV();
+
 // класс 
 class redirect_output_wrapper
 {

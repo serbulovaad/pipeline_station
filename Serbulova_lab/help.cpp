@@ -1,18 +1,13 @@
 #include "help.h"
 using namespace std;
 
+void coutNoObjectFound() { std::cout << "No objects found :(" << std::endl; }
+void coutV() { std::cout << "> "; }
+
 string inputString(istream& in) // string input for whole line
-//string inputString(istream& in, const string& exeption)
 {
 	string str;
 	getline(in >> ws, str);
-	/*if (exeption != "")
-		while (str == exeption)
-		{
-			cout << "ERROR wrong name " << exeption << " --> try again: ";
-			cerr << str << endl;
-			getline(in >> ws, str);
-		}*/
 	cerr << str << endl; // LOGGING!!!!!!!
 	return str;
 }
@@ -26,7 +21,7 @@ T inputNumber(istream& in) // check type
 	{
 		in.clear();
 		in.ignore(10000, '\n');
-		cout << "ERROR wrong type --> try again: ";
+		cout << "ERROR wrong type -> try again: ";
 		cerr << x << endl; // LOGGING!!!!!!!
 	}
 	cerr << x << endl; // LOGGING!!!!!!!
@@ -43,7 +38,7 @@ T getCorrectNumber(T a, T b, bool included, istream& in) // check that number is
 		|| (!included && (x <= a || x >= b)))
 	{
 		string str_included = included ? "= " : " ";
-		cout << "ERROR wrong number: min >" << str_included << a << " and max <" << str_included << b << " --> try again: ";
+		cout << "ERROR wrong number: min >" << str_included << a << " and max <" << str_included << b << " -> try again: ";
 		x = inputNumber<T>(in);
 	}
 	return x;
@@ -61,6 +56,6 @@ template double getPositiveNumber(istream& in);
 
 bool confirm(string message)
 {
-	cout << message <<"\n0.no\n1.yes" << endl;
+	cout << message <<"\n0.no\n1.yes" << endl << "> ";
 	return getCorrectNumber(0, 1);
 }

@@ -13,12 +13,11 @@ CS::CS()
 
 ostream& operator << (ostream & out, const CS & cs) // output for CS
 {
-	cout << "CS ID = " << cs.ID << endl;
-	out << "name: " << cs.name << endl
-		<< "ws: " << cs.ws << endl
-		<< "ws in work: " << cs.ws_work << endl
-		<< "eff: " << cs.eff << endl;
-
+	cout << "ID = " << cs.ID << endl;
+	out << "name = " << cs.name << endl
+		<< "ws = " << cs.ws << endl
+		<< "ws in work = " << cs.ws_work << endl
+		<< "eff = " << cs.eff << endl;
 	return out;
 }
 

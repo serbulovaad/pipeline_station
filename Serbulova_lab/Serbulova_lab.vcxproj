@@ -132,12 +132,16 @@
     <ClCompile Include="help.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pipe.cpp" />
+    <ClCompile Include="refinary.cpp" />
+    <ClCompile Include="refinary.filters.cpp" />
+    <ClCompile Include="refinery.editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CS.h" />
     <ClInclude Include="help.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pipe.h" />
+    <ClInclude Include="refinary.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
