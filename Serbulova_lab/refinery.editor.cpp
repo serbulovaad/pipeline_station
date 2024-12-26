@@ -28,7 +28,7 @@ template<typename T>
 unordered_set<int> selectByChosenID(unordered_map<int, T>& map, unordered_set<int>& set);
 
 template<typename T>
-void Editor(std::unordered_map<int, T>& map)
+void refinary::Editor(std::unordered_map<int, T>& map)
 {
 	unordered_set<int> res;
 	if (map.empty())
@@ -155,8 +155,32 @@ void editMap(unordered_map<int, CS>& map)
 	std::cout << "All possible selected objects were edited" << endl;
 }
 
+void refinary::delete_it(std::unordered_map<int, pipe>& map, std::unordered_set<int>& set)
+{
+	for (int id : set)
+		if (linkset.contains(id))
+			cout << "Please disconnect pipe with ID = " << id << " to delete it" << endl;
+		else
+			map.erase(id);
+}
+
+void refinary::delete_it(std::unordered_map<int, CS>& map, std::unordered_set<int>& set)
+{
+	for (int id : set)
+		for (auto& [i, vecval] : linkset)
+			for (int k = 0; k < vecval.size(); k++)
+				if (vecval[k].csInID == i or vecval[k].csOutID == i)
+				{
+					cout << "Please disconnect cs with ID = " << id << " to delete it" << endl;
+					break;
+				}
+				else
+					map.erase(id);
+
+}
+
 template<typename T>
-void editSelected(std::unordered_map<int, T>& map, std::unordered_set<int>& set)
+void refinary::editSelected(std::unordered_map<int, T>& map, std::unordered_set<int>& set)
 {
 	std::cout << "Choose what to do with selected objects:\n1. Print\n2. Edit\n3. Delete\n0. Exit" << std::endl << "> ";
 	switch (getCorrectNumber<int>(0, 3))
@@ -178,8 +202,7 @@ void editSelected(std::unordered_map<int, T>& map, std::unordered_set<int>& set)
 	}
 	case 3:
 	{
-		for (int id : set)
-			map.erase(id);
+		delete_it(map, set);
 		std::cout << "All selected objects were deleted" << endl;
 		return;
 	}
@@ -188,5 +211,5 @@ void editSelected(std::unordered_map<int, T>& map, std::unordered_set<int>& set)
 	}
 	editSelected(map, set);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
-template void editSelected(std::unordered_map<int, pipe>& map, std::unordered_set<int>& set);
-template void editSelected(std::unordered_map<int, CS>& map, std::unordered_set<int>& set);
+template void refinary::editSelected(std::unordered_map<int, pipe>& map, std::unordered_set<int>& set);
+template void refinary::editSelected(std::unordered_map<int, CS>& map, std::unordered_set<int>& set);

@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CS.cpp" />
+    <ClCompile Include="graph.cpp" />
     <ClCompile Include="help.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pipe.cpp" />
@@ -138,7 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CS.h" />
+    <ClInclude Include="graph.h" />
     <ClInclude Include="help.h" />
+    <ClInclude Include="link.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pipe.h" />
     <ClInclude Include="refinary.h" />

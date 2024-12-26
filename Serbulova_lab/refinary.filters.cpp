@@ -15,6 +15,11 @@ bool checkByWSInWork(CS& cs, double percent)
 	return cs.getPercentWsInUse() >= percent;
 }
 
+double checkByDiam(pipe& p, double diam)
+{
+	return p.getDiam() == diam;
+}
+
 template<typename T, typename U>
 std::unordered_set<int> findByFilter(std::unordered_map<int, T>& map, Filter<T, U> f, U param);
 

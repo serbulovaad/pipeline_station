@@ -27,6 +27,10 @@ public:
 	bool runWS();
 	bool stopWS();
 
+	static int getMaxID()
+	{
+		return MaxID;
+	}
 	int getID()
 	{
 		return ID;

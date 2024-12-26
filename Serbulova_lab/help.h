@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <format>
+#include <vector>
 
 std::string inputString(std::istream& in = std::cin);
 //std::string inputString(std::istream& in, const std::string& exeption = "");

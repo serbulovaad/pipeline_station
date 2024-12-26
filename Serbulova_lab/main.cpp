@@ -13,12 +13,13 @@ int MenuOutput()
 	{
 		cout << "---------------\nMenu\n"
 			"1. Add pipe\n2. Add CS\n3. View all objects\n" 
-			"4. Pipe's editor\n5. CS's editor\n"
-			"6. Save refinary system\n7. Download refinary system\n8. Delete refinary system\n"
+			"4. Pipe's editor\n5. CS's editor\n6. Connect CS\n7. Disconnect CS\n"
+			"8. Print Refinary\n9. Topological sorting\n10. Max flow\n11. Best path\n"
+			"12. Save refinary system\n13. Download refinary system\n14. Delete refinary system\n"
 			"0. Exit\n---------------\n";
 		cout << "Choose option: ";
 
-		switch (getCorrectNumber(0, 8))
+		switch (getCorrectNumber(0, 14))
 		{
 		case 0:
 		{
@@ -57,17 +58,53 @@ int MenuOutput()
 		}
 		case 6:
 		{
+			cout << "Connecting CSs" << endl << endl;
+			ref.connectCS();
+			break;
+		}
+		case 7:
+		{
+			cout << "Disconnect CS" << endl << endl;
+			ref.disconnectCS();
+			break;
+		}
+		case 8:
+		{
+			cout << "Print Refinary" << endl << endl;
+			ref.printConnection();
+			break;
+		}
+		case 9:
+		{
+			cout << "Topological sorting" << endl << endl;
+			ref.start_sort();
+			break;
+		}
+		case 10:
+		{
+			cout << "Max flow" << endl << endl;
+			ref.start_pathlen();
+			break;
+		}
+		case 11:
+		{
+			cout << "Best path" << endl << endl;
+			ref.start_short();
+			break;
+		}
+		case 12:
+		{
 			cout << "Saving your system" << endl << endl;
 			ref.saveFile();
 			break;
 		}
-		case 7:
+		case 13:
 		{
 			cout << "Downloading refinary system" << endl << endl;
 			ref.loadFile();
 			break;
 		}
-		case 8:
+		case 14:
 		{
 			cout << "Deleting refinary system" << endl << endl;
 			ref.deleteAll();

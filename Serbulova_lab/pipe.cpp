@@ -11,6 +11,16 @@ pipe::pipe()
 	in_repair = 0;
 };
 
+pipe::pipe(string nam, double len, int diam)
+{
+	ID = ++MaxID;
+	name = "";
+	in_repair = 0;
+	d = diam;
+	l = len;
+	name = nam;
+};
+
 ostream& operator<<(std::ostream& out, const pipe& p)
 {
 	cout << "ID = " << p.ID << endl;

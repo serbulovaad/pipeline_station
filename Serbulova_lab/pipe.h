@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <math.h>
 
 class pipe
 {
@@ -9,14 +10,13 @@ private:
 	static int MaxID;
 	int ID;
 	std::string name;
-	double l; // length;
 	int d; // diameter;
+	double l; // length;
 	bool in_repair; // 0 False - ready for use, 1 True - under in_repair
-	int inID;
-	int outID;
 
 public:
 	pipe();
+	pipe(std::string nam, double len, int diam);
 
 	static pipe addPipe(); //не к конкретной трубе
 	static void resetMaxID();
@@ -38,6 +38,14 @@ public:
 	bool getInRepair()
 	{
 		return in_repair;
+	}
+	int getDiam()
+	{
+		return d;
+	}
+	double getCapacity()
+	{
+		return std::sqrt(pow(d*0.0001, 5) / l);
 	}
 };
 
