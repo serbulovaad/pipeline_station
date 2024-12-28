@@ -3,6 +3,7 @@
 #include "pipe.h"
 #include "CS.h"
 #include "refinary.h"
+#include "graph.h"
 using namespace std;
 using namespace chrono;
 
@@ -77,19 +78,30 @@ int MenuOutput()
 		case 9:
 		{
 			cout << "Topological sorting" << endl << endl;
+			if (!ref.getLinkset().empty())
+				graph::topological_sort(graph::create_matrix(ref.getLinkset()));
+			else
+				cout << "Graph do not found" << endl;
 			//ref.start_sort();
 			break;
 		}
 		case 10:
 		{
 			cout << "Max flow" << endl << endl;
-			//ref.start_pathlen();
+			//if (!ref.getLinkset().empty())
+			//	graph::topological_sort(graph::create_matrix(ref.getLinkset()));
+			//else
+			//	cout << "Graph do not found" << endl;
 			break;
 		}
 		case 11:
 		{
 			cout << "Best path" << endl << endl;
-			//ref.start_short();
+			//if (!ref.getLinkset().empty())
+			//	graph::topological_sort(graph::create_matrix(ref.getLinkset()));
+			//else
+			//	cout << "Graph do not found" << endl;
+			
 			break;
 		}
 		case 12:

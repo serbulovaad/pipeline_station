@@ -9,6 +9,7 @@
 #include <format>
 #include <vector>
 #include <set>
+#include <stack>
 
 
 std::string inputString(std::istream& in = std::cin);

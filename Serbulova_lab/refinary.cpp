@@ -260,6 +260,8 @@ void refinary::connectCS() //SETTRBL
 		else return;
 	}
 	linkset.emplace(l);
+	cout << endl;
+
 }
 
 bool refinary::try_disconnect_pipe_with_id(int id) //SETTRBL
@@ -336,4 +338,5 @@ void refinary::disconnectCS() //SETTRBL
 	default:
 		break;
 	}
+	cout << endl;
 }

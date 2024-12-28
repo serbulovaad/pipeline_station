@@ -1,216 +1,85 @@
-//#include "graph.h"
-//using namespace std;
-//
-//
-//
-//
-//void graph::create_matrix(std::vector<std::vector<int>>& adjMatrix, int& size) {
-//	//размер матрицы
-//	for (const auto& [i, vecval] : linkset) {
-//		for (int k = 0; k < vecval.size(); k++)
-//			size = std::max(size, std::max(vecval[k].csInID, vecval[k].csOutID) + 1);
-//	}
-//
-//	adjMatrix.resize(size, std::vector<int>(size, 0)); // по умолчанию 0 (нет связи)
-//
-//	for (const auto& [i, vecval] : linkset) {
-//		for (int k = 0; k < vecval.size(); k++)
-//		{
-//			const link& link = vecval[k];
-//			adjMatrix[link.csInID][link.csOutID] = link.pipeID; // заполняем pipeID
-//		}
-//	}
-//}
-//
-//bool graph::topological_sort(const std::vector<std::vector<int>>& adjMatrix, std::vector<int>& sortedOrder) {
-//	int size = adjMatrix.size();
-//	std::vector<int> inDegree(size, 0);
-//
-//	// Вычисляем входные степени
-//	for (int i = 0; i < size; ++i) {
-//		for (int j = 0; j < size; ++j) {
-//			if (adjMatrix[i][j] != 0) { // Связь существует (вес не 0)
-//				inDegree[j]++;
-//			}
-//		}
-//	}
-//
-//	// Используем очередь для вершин с входной степенью 0
-//	std::queue<int> zeroInDegree;
-//	for (int i = 0; i < size; ++i) {
-//		if (inDegree[i] == 0) {
-//			zeroInDegree.push(i);
-//		}
-//	}
-//
-//	while (!zeroInDegree.empty()) {
-//		int node = zeroInDegree.front();
-//		zeroInDegree.pop();
-//		sortedOrder.push_back(node);
-//
-//		for (int j = 0; j < size; ++j) {
-//			// Проверяем наличие связи
-//			if (adjMatrix[node][j] != 0) {
-//				inDegree[j]--; // Уменьшаем входную степень
-//				if (inDegree[j] == 0) {
-//					zeroInDegree.push(j); // Добавляем в очередь, если входная степень теперь 0
-//				}
-//			}
-//		}
-//	}
-//
-//	// Проверка на циклы
-//	return sortedOrder.size() == size;
-//}
-//
-//void graph::start_sort() {
-//	std::vector<std::vector<int>> matrix;
-//	int size = 0;
-//
-//	if (linkset.size() == 1)
-//	{
-//		for (auto& [id, vecval] : linkset)
-//		{
-//			cout << "Add more connection" << endl;
-//			std::cout << "CS ID: " << vecval[0].csInID << "\n"; // Выводим ID компрессорной станции
-//			std::cout << "CS ID: " << vecval[0].csOutID << "\n"; // Выводим ID компрессорной станции
-//			return;
-//		}
-//	}
-//
-//	// Создаем матрицу смежности
-//	create_matrix(matrix, size);
-//
-//	// Выполняем топологическую сортировку
-//	std::vector<int> sortedOrder;
-//	if (topological_sort(matrix, sortedOrder)) {
-//		std::cout << "Topological sort: \n";
-//		for (int id : sortedOrder) {
-//			if (id > 0)
-//				std::cout << "CS ID: " << id << "\n"; // Выводим ID компрессорной станции
-//		}
-//		std::cout << "This is the order of ID\n";
-//	}
-//	else {
-//		std::cout << "Cicle in graph -> Impossible to sort";
-//	}
-//
-//	int numCities = CS::getMaxID();
-//	std::cout << "\nMatrix smejnosti:\n";
-//	std::cout << "CS ";
-//	for (const auto& [id, cs] : csmap) {
-//		std::cout << id << " ";
-//	}
-//	std::cout << "\n";
-//
-//	for (const auto& [id, cs] : csmap) {
-//		std::cout << " " << id << " ";
-//		for (int j = 1; j <= numCities; ++j) {
-//			std::cout << matrix[id][j] << " "; // Используем ID станций для доступа к матрице
-//		}
-//		std::cout << "\n";
-//	}
-//
-//}
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//double graph::findMaxFlow(int currentCSID, int endCSID, const std::unordered_map<int, std::vector<link>>& linkset, std::unordered_map<int, bool>& visited) {
-//	// Если достигли конечной компрессорной станции
-//	if (currentCSID == endCSID) {
-//		return std::numeric_limits<int>::max(); // Вернуть "бесконечность", если достигли конца
-//	}
-//
-//	visited[currentCSID] = true; // Отметить текущую станцию как посещенную
-//	double maxFlow = 0; // Инициализация максимального потока
-//
-//	// Проходим по всем трубопроводам, исходящим из текущей компрессорной станции
-//	for (const auto& l : linkset) {
-//		for (const auto& connection : l.second) {
-//			// Если у нас есть связь с текущей КС и она еще не посещена
-//			if (connection.csInID == currentCSID && !visited[connection.csOutID]) {
-//				double capacity = pipemap[connection.pipeID].getCapacity(); // Получаем емкость трубы
-//				double availableFlow = findMaxFlow(connection.csOutID, endCSID, linkset, visited); // Ищем поток дальше
-//				if (availableFlow > 0) { // Если есть доступный поток
-//					// Находим минимальный поток на текущем пути
-//					double currentFlow = std::min(static_cast<double>(capacity), availableFlow);
-//					maxFlow = std::max(maxFlow, currentFlow);
-//				}
-//			}
-//		}
-//	}
-//
-//	visited[currentCSID] = false; // Возвращаем текущую станцию к непосещенной
-//	return maxFlow; // Вернуть максимальный поток
-//}
-//
-//void graph::printPath(int endCSID, const std::unordered_map<int, int>& predecessor) {
-//	std::vector<int> path;
-//	for (int at = endCSID; at != -1; at = predecessor.at(at)) {
-//		path.push_back(at);
-//	}
-//	std::reverse(path.begin(), path.end());
-//
-//	std::cout << "Path: ";
-//	for (const auto& csID : path) {
-//		std::cout << csID << " "; // Выводим путь
-//	}
-//	std::cout << std::endl;
-//}
-//
-//void graph::start_pathlen() {
-//
-//	int startCSID, endCSID;
-//	std::cout << "Start CS ID: ";
-//	std::cin >> startCSID;
-//	std::cout << "Finish CD ID: ";
-//	std::cin >> endCSID;
-//
-//	// Параметры для отслеживания посещенных узлов
-//	std::unordered_map<int, bool> visited;
-//	std::unordered_map<int, int> predecessor;
-//	for (const auto& link : linkset) {
-//		for (const auto& conn : link.second) {
-//			predecessor[conn.csOutID] = -1; // Инициализируем предшественников
-//			predecessor[conn.csInID] = -1;
-//		}
-//	}
-//	// Нахождение максимального потока
-//	double maxFlow = findMaxFlow(startCSID, endCSID, linkset, visited);
-//
-//	if (maxFlow > 0 && startCSID != endCSID) {
-//		std::cout << "Max len between " << startCSID << " and " << endCSID << ": " << maxFlow << std::endl;
-//	}
-//	else {
-//		std::cout << "Max len between " << startCSID << " and " << endCSID << " not found" << std::endl;
-//	}
-//
-//	printPath(endCSID, predecessor); // Выводим путь
-//}
-//
-//
-//
-//
-//
-//
-//
-//
+#include "graph.h"
+using namespace std;
+
+std::vector<std::vector<int>> graph::create_matrix(const std::set<link>& s) {
+    int maxID = 0;
+    for (const auto& l : s) { //тут выбрали размер матрицы смежности
+        if (l.csInID > maxID) maxID = l.csInID;
+        if (l.csOutID > maxID) maxID = l.csOutID;
+    }
+
+    vector<vector<int>> matrix(maxID, vector<int>(maxID, 0)); // тут создали вектор
+
+    for (const auto& l : s) {
+        matrix[l.csInID - 1][l.csOutID - 1] = l.pipeID; // тут вес
+    }
+
+    cout << "Matrix:" << endl;
+    cout << "  ";
+    for (const auto& l : s) 
+        cout << l.csInID << " ";
+    cout << endl;
+        
+    for (const auto& row : matrix) {
+        for (int weight : row) {
+            cout << weight << ' ';
+        }
+        cout << '\n';
+    }
+    cout << endl;
+
+    return matrix;
+}
+
+
+bool graph::dfs(int v, vector<int>& state, stack<int>& stk, const vector<vector<int>>& matrix) {
+    state[v] = 1;
+
+    for (int i = 0; i < matrix.size(); ++i) { 
+        if (matrix[v][i] != 0) {
+            if (state[i] == 1) {
+                return false; 
+            }
+            if (state[i] == 0) {
+                if (!dfs(i, state, stk, matrix)) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    state[v] = 2; 
+    stk.push(v); 
+    return true;
+}
+
+void graph::topological_sort(const vector<vector<int>>& matrix) {
+    stack<int> stk;
+    vector<int> state(matrix.size(), 0);
+
+    for (int i = 0; i < matrix.size(); ++i) {
+        if (state[i] == 0) {
+            if (!dfs(i, state, stk, matrix)) {
+                cout << "The graph has a cycle -> topological sorting is impossible" << endl;
+                return;
+            }
+        }
+    }
+
+    cout << "Topological sorting (ID CSes) : ";
+    while (!stk.empty()) {
+        cout << stk.top() + 1 << " "; 
+        stk.pop();
+    }
+    cout << endl;
+}
+
+
+
+
+
+
+
 //void graph::dijkstra(int startCSID, int endCSID) {
 //	std::unordered_map<int, double> minCapacity;
 //	std::unordered_map<int, int> prev;

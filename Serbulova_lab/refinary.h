@@ -20,6 +20,10 @@ private:
 	std::set<link> linkset;
 
 public:
+	std::set<link> getLinkset()
+	{
+		return linkset;
+	}
 	refinary();
 
 	void startPipe();
