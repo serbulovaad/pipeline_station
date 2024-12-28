@@ -45,7 +45,7 @@ public:
 	}
 	double getCapacity() const
 	{
-		std::cout << std::sqrt(pow(d * 0.0001, 5) / l)  << std::endl;
+		//std::cout << std::sqrt(pow(d * 0.0001, 5) / l)  << std::endl;
 		return std::sqrt(pow(d*0.0001, 5) / l);
 	}
 };

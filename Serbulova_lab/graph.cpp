@@ -4,6 +4,22 @@
 #include <limits>
 using namespace std;
 
+template <typename T>
+void graph::cout_matrix(const vector<vector<T>>& matrix)
+{
+    cout << endl;
+    cout << "Matrix:" << endl;
+    for (const auto& row : matrix) {
+        for (T weight : row) {
+            cout << weight << ' ';
+        }
+        cout << '\n';
+    }
+    cout << endl;
+}
+template void graph::cout_matrix(const vector<vector<int>>& matrix);
+template void graph::cout_matrix(const vector<vector<double>>& matrix);
+
 std::vector<std::vector<int>> graph::create_matrix(const std::set<link>& s) {
     int maxID = 0;
     for (const auto& l : s) { //тут выбрали размер матрицы смежности
@@ -17,14 +33,7 @@ std::vector<std::vector<int>> graph::create_matrix(const std::set<link>& s) {
         matrix[l.csInID - 1][l.csOutID - 1] = l.pipeID; // тут вес
     }
 
-    cout << "Matrix:" << endl;        
-    for (const auto& row : matrix) {
-        for (int weight : row) {
-            cout << weight << ' ';
-        }
-        cout << '\n';
-    } 
-    cout << endl;
+    cout_matrix(matrix);
 
     return matrix;
 }
@@ -46,14 +55,7 @@ std::vector<std::vector<double>> graph::create_double_matrix(const std::set<link
             matrix[l.csInID - 1][l.csOutID - 1] = pipemap[l.pipeID].getCapacity();
     }
 
-    cout << "Matrix:" << endl;
-    for (const auto& row : matrix) {
-        for (double weight : row) {
-            cout << weight << ' ';
-        }
-        cout << '\n';
-    }
-    cout << endl;
+    cout_matrix(matrix);
 
     return matrix;
 }
@@ -102,97 +104,115 @@ void graph::topological_sort(const vector<vector<int>>& matrix) {
 
 
 
+bool graph::findAugmentingPath(const std::vector<std::vector<double>>& residualGraph, int source, int sink, std::vector<int>& parent) {
+    int n = residualGraph.size();
+    parent.assign(n, -1); // Сбрасываем родительский массив
+    std::queue<double> queue;
+    queue.push(source);
 
+    while (!queue.empty()) {
+        double current = queue.front();
+        queue.pop();
 
-
-bool graph::bfs(const vector<vector<double>>& capacity, vector<int>& parent, int source, int sink) {
-    int n = capacity.size();
-    vector<bool> visited(n, false);
-    queue<int> q;
-
-    q.push(source);
-    visited[source] = true;
-    parent[source] = -1;
-
-    while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-
-        for (int v = 0; v < n; ++v) {
-            if (!visited[v] && capacity[u][v] > 0) {
-                q.push(v);
-                parent[v] = u;
-                visited[v] = true;
-                if (v == sink) {
-                    return true;
-                }
+        for (int next = 0; next < n; ++next) {
+            // Если есть пропускная способность и вершина не посещена
+            if (residualGraph[current][next] > 0 && parent[next] == -1 && next != source) {
+                parent[next] = current; // Сохраняем текущую вершину как родительскую
+                if (next == sink) return true; // Если дошли до стока
+                queue.push(next); // Продолжаем исследование
             }
         }
     }
-
-    return false;
+    return false; // Пути нет
 }
 
-double graph::max_flow(const vector<vector<double>>& capacity, int source, int sink) {
-    int n = capacity.size();
-    vector<vector<double>> residualCapacity = capacity;
-    vector<int> parent(n);
+// Реализация алгоритма Эдмондса-Карпа
+double graph::max_flow(std::vector<std::vector<double>> graph, int source, int sink) {
+    int n = graph.size();
+    std::vector<std::vector<double>> residualGraph(graph); // Создаем остаточную сеть
+    std::vector<int> parent(n); // Для хранения пути
     double maxFlow = 0;
 
-    while (bfs(residualCapacity, parent, source, sink)) {
-        double pathFlow = numeric_limits<double>::max();
+    // Повторяем поиск увеличивающих путей
+    while (findAugmentingPath(residualGraph, source, sink, parent)) {
+        // Вычисляем минимальную пропускную способность на найденном пути
+        double flow = numeric_limits<double>::max();;
         for (int v = sink; v != source; v = parent[v]) {
             int u = parent[v];
-            pathFlow = min(pathFlow, residualCapacity[u][v]);
+            flow = std::min(flow, residualGraph[u][v]);
         }
 
+        // Обновляем остаточную сеть
         for (int v = sink; v != source; v = parent[v]) {
             int u = parent[v];
-            residualCapacity[u][v] -= pathFlow;
-            residualCapacity[v][u] += pathFlow;
+            residualGraph[u][v] -= flow;
+            residualGraph[v][u] += flow;
         }
 
-        maxFlow += pathFlow;
+        // Увеличиваем общий поток
+        maxFlow += flow;
     }
 
     return maxFlow;
 }
 
 
-vector<double> graph::short_path(const vector<vector<double>>& graph, int source, int target) {
-    int n = graph.size();
-    vector<double> distances(n, numeric_limits<double>::max());
-    vector<bool> visited(n, false);
-    distances[source] = 0;
 
-    using P = pair<double, int>;
-    priority_queue<P, vector<P>, greater<P>> pq;
-    pq.push({ 0, source }); 
+double graph::path_length(const vector<vector<double>>& adj_matrix, const vector<int>& path) {
+    double length = 0.0;
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+        length += adj_matrix[path[i]][path[i + 1]];
+    }
+    return length;
+}
+
+vector<int> graph::short_path(vector<vector<double>> adj_weight, int StartNode, int EndNode) {
+    vector<int> dist(adj_weight.size(), INT_MAX);
+    vector<int> prev(adj_weight.size(), -1);
+    vector<bool> visited(adj_weight.size(), false);
+
+    //StartNode = GetIndex(StartNode);
+    //EndNode = GetIndex(EndNode);
+
+    dist[StartNode] = 0;
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({ 0, StartNode });
 
     while (!pq.empty()) {
-        double currentDistance = pq.top().first;
-        int currentNode = pq.top().second;
+        int u = pq.top().second;
         pq.pop();
 
-        if (visited[currentNode]) {
-            continue; 
-        }
+        if (u == EndNode) { break; }
 
-        visited[currentNode] = true;
+        visited[u] = true;
 
-        for (int neighbor = 0; neighbor < n; ++neighbor) {
-            double edgeWeight = graph[currentNode][neighbor];
-
-            if (edgeWeight > 0 && !visited[neighbor]) { 
-                double newDistance = currentDistance + edgeWeight;
-
-                if (newDistance < distances[neighbor]) {
-                    distances[neighbor] = newDistance;
-                    pq.push({ newDistance, neighbor });
-                }
+        for (int v = 0; v < adj_weight.size(); ++v) {
+            if (!visited[v] && adj_weight[u][v] && dist[u] != INT_MAX &&
+                dist[u] + adj_weight[u][v] < dist[v])
+            {
+                dist[v] = dist[u] + adj_weight[u][v];
+                prev[v] = u;
+                pq.push({ dist[v], v });
             }
         }
     }
 
-    return distances; 
+    vector<int> path;
+    int current_node = EndNode;
+    while (current_node != StartNode) {
+        /*path.push_back(nodes.at(current_node));*/
+        path.push_back(current_node);
+        if (prev[current_node] != -1) {
+            current_node = prev[current_node];
+        }
+        else {
+            return vector<int>();
+        }
+    }
+    //path.push_back(nodes.at(StartNode));
+    path.push_back(StartNode);
+    reverse(path.begin(), path.end());
+    return path;
 }
+

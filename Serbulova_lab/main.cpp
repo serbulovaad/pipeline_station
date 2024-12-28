@@ -93,10 +93,11 @@ int MenuOutput()
 				int fromID = inputNumber<int>();
 				cout << "To CS ID = ";
 				int toID = inputNumber<int>();
-				vector<vector<double>> mtr = graph::create_double_matrix(ref.getLinkset(), ref.pipemap);
+				cout << endl;
 
+				vector<vector<double>> mtr = graph::create_double_matrix(ref.getLinkset(), ref.pipemap);
 				double maxFlow = graph::max_flow(mtr, fromID-1, toID-1);
-				cout << fixed << setprecision(1) << "Max flow from " << fromID << " to " << toID << ": " << maxFlow << endl;
+				std::cout << "Max flow from ID = " << fromID << " to ID = " << toID << " is " << maxFlow << std::endl << std::endl;
 			}
 			else
 				cout << "Graph do not found" << endl;
@@ -113,11 +114,21 @@ int MenuOutput()
 				int toID = inputNumber<int>();
 				vector<vector<double>> mtr = graph::create_double_matrix(ref.getLinkset(), ref.pipemap);
 
-				vector<double> distances = graph::short_path(mtr, fromID - 1, toID - 1);
-				cout << fixed << setprecision(1) << "Shortest path from "
-					<< fromID << " to " << toID << ": "
-					<< (distances[fromID-1] == numeric_limits<double>::max() ? -1 : distances[toID-1])
-					<< endl;
+				vector<int> path = graph::short_path(mtr, fromID - 1, toID - 1);
+
+				if (path.empty() || path.size() == 1) {
+					cout << "Path not found!" << endl;
+				}
+				else {
+					cout << "Found Way: ";
+					for (int node : path) {
+						cout << node+1 << " ";
+					}
+					cout << endl;
+
+					double length = graph::path_length(mtr, path);
+					cout << "Len: " << length << endl;
+				}
 			}
 			else
 				cout << "Graph do not found" << endl;
