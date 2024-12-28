@@ -27,24 +27,25 @@ public:
 	friend std::ifstream& operator >> (std::ifstream& fin, pipe& p);
 
 	void editPipe(int status = 2);
-	int getID()
+	int getID() const
 	{
 		return ID;
 	}
-	std::string getName()
+	std::string getName() const
 	{
 		return name;
 	}
-	bool getInRepair()
+	bool getInRepair() const
 	{
 		return in_repair;
 	}
-	int getDiam()
+	int getDiam() const
 	{
 		return d;
 	}
-	double getCapacity()
+	double getCapacity() const
 	{
+		std::cout << std::sqrt(pow(d * 0.0001, 5) / l)  << std::endl;
 		return std::sqrt(pow(d*0.0001, 5) / l);
 	}
 };

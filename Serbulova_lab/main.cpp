@@ -82,26 +82,45 @@ int MenuOutput()
 				graph::topological_sort(graph::create_matrix(ref.getLinkset()));
 			else
 				cout << "Graph do not found" << endl;
-			//ref.start_sort();
 			break;
 		}
 		case 10:
 		{
 			cout << "Max flow" << endl << endl;
-			//if (!ref.getLinkset().empty())
-			//	graph::topological_sort(graph::create_matrix(ref.getLinkset()));
-			//else
-			//	cout << "Graph do not found" << endl;
+			if (!ref.getLinkset().empty())
+			{
+				cout << "From CS ID = ";
+				int fromID = inputNumber<int>();
+				cout << "To CS ID = ";
+				int toID = inputNumber<int>();
+				vector<vector<double>> mtr = graph::create_double_matrix(ref.getLinkset(), ref.pipemap);
+
+				double maxFlow = graph::max_flow(mtr, fromID-1, toID-1);
+				cout << fixed << setprecision(1) << "Max flow from " << fromID << " to " << toID << ": " << maxFlow << endl;
+			}
+			else
+				cout << "Graph do not found" << endl;
 			break;
 		}
 		case 11:
 		{
 			cout << "Best path" << endl << endl;
-			//if (!ref.getLinkset().empty())
-			//	graph::topological_sort(graph::create_matrix(ref.getLinkset()));
-			//else
-			//	cout << "Graph do not found" << endl;
-			
+			if (!ref.getLinkset().empty())
+			{
+				cout << "From CS ID = ";
+				int fromID = inputNumber<int>();
+				cout << "To CS ID = ";
+				int toID = inputNumber<int>();
+				vector<vector<double>> mtr = graph::create_double_matrix(ref.getLinkset(), ref.pipemap);
+
+				vector<double> distances = graph::short_path(mtr, fromID - 1, toID - 1);
+				cout << fixed << setprecision(1) << "Shortest path from "
+					<< fromID << " to " << toID << ": "
+					<< (distances[fromID-1] == numeric_limits<double>::max() ? -1 : distances[toID-1])
+					<< endl;
+			}
+			else
+				cout << "Graph do not found" << endl;
 			break;
 		}
 		case 12:

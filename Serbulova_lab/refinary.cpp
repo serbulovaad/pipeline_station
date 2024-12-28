@@ -301,6 +301,25 @@ bool refinary::try_disconnect_cs_with_id(int id) //SETTRBL
 	return !(helpo_in.empty() and helpo_out.empty());
 }
 
+bool refinary::find_from_cs_with_id(int id)
+{
+	set<link> helpo_in;
+	for (auto& val : linkset)
+		if (val.csInID == id)
+			return true;
+
+	return false;
+}
+bool refinary::find_to_cs_with_id(int id)
+{
+	set<link> helpo_in;
+	for (auto& val : linkset)
+		if (val.csOutID == id)
+			return true;
+
+	return false;
+}
+
 void refinary::disconnectCS() //SETTRBL
 {
 	if (linkset.empty())

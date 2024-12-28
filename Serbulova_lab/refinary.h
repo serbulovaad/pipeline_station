@@ -14,15 +14,20 @@
 class refinary
 {
 private:
-	std::unordered_map<int, pipe> pipemap;
 	std::unordered_map<int, CS> csmap;
 	//std::unordered_map<int, std::vector<link>> linkset;
 	std::set<link> linkset;
 
 public:
+	std::unordered_map<int, pipe> pipemap;
+
 	std::set<link> getLinkset()
 	{
 		return linkset;
+	}
+	std::unordered_map<int, pipe> getPipemap()
+	{
+		return pipemap;
 	}
 	refinary();
 
@@ -56,6 +61,10 @@ public:
 	bool try_disconnect_pipe_with_id(int id);
 	bool try_disconnect_cs_with_id(int id);
 
+	bool find_from_cs_with_id(int id);
+	bool find_to_cs_with_id(int id);
+
+
 	void disconnectCS();
 
 	//editor
@@ -75,8 +84,8 @@ public:
 	template<typename T>
 	void editSelected(std::unordered_map<int, T>& map, std::unordered_set<int>& set);
 
-	friend void editMap(std::unordered_map<int, pipe>& map);
-	friend void editMap(std::unordered_map<int, CS>& map);
+	friend void editMap(std::unordered_map<int, pipe>& map, std::unordered_set<int>& s);
+	friend void editMap(std::unordered_map<int, CS>& map, std::unordered_set<int>& s);
 
 	//filters
 	template<typename T, typename U>

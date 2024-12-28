@@ -91,7 +91,7 @@ void refinary::Editor(std::unordered_map<int, T>& map)
 	}
 }
 
-void editMap(unordered_map<int, pipe>& map)
+void editMap(unordered_map<int, pipe>& map, std::unordered_set<int>& s)
 {
 	cout << "Do you want all repair statuses to be..\n1. Inverted\n2. Set as TRUE or 1\n3.Set as FALSE or 0\n0.Exit" << endl << "> ";
 	int mark = 2;
@@ -118,11 +118,12 @@ void editMap(unordered_map<int, pipe>& map)
 		break;
 	}
 	for (auto& [id, p] : map)
-		p.editPipe(mark);
+		if (s.contains(id))
+			p.editPipe(mark);
 	std::cout << "All selected objects were edited" << endl;
 }
 
-void editMap(unordered_map<int, CS>& map)
+void editMap(unordered_map<int, CS>& map, std::unordered_set<int>& s)
 {
 	if (!map.empty()) 
 		cout << "Do you want to do for all CSes?\n1. Run one ws\n2. Stop one ws\n0. Exit" << endl << "> ";
@@ -135,15 +136,17 @@ void editMap(unordered_map<int, CS>& map)
 	case 1:
 	{
 		for (auto& [id, cs] : map)
-			if (!cs.runWS())
-				cout << "Cannot change CS with ID = " << id << endl;
+			if (s.contains(id))
+				if (!cs.runWS())
+					cout << "Cannot change CS with ID = " << id << endl;
 		break;
 	}
 	case 2:
 	{
 		for (auto& [id, cs] : map)
-			if (!cs.stopWS())
-				cout << "Cannot change CS with ID = " << id << endl;
+			if (s.contains(id))
+				if (!cs.stopWS())
+					cout << "Cannot change CS with ID = " << id << endl;
 
 		break;
 	}
@@ -217,7 +220,7 @@ void refinary::editSelected(std::unordered_map<int, T>& map, std::unordered_set<
 	}
 	case 2:
 	{
-		editMap(map);
+		editMap(map, set);
 		break;
 	}
 	case 3:
