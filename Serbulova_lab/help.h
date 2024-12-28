@@ -8,6 +8,8 @@
 #include <chrono>
 #include <format>
 #include <vector>
+#include <set>
+
 
 std::string inputString(std::istream& in = std::cin);
 //std::string inputString(std::istream& in, const std::string& exeption = "");
@@ -23,7 +25,7 @@ T getPositiveNumber(std::istream& in = std::cin);
 
 bool confirm(std::string);
 
-void coutNoObjectFound();
+void coutNoObjectFound(std::string = "objects");
 
 void coutV();
 

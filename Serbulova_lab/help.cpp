@@ -1,7 +1,7 @@
 #include "help.h"
 using namespace std;
 
-void coutNoObjectFound() { std::cout << "No objects found :(" << std::endl; }
+void coutNoObjectFound(string s) { std::cout << "No "<< s << " found :(" << std::endl; }
 void coutV() { std::cout << "> "; }
 
 string inputString(istream& in) // string input for whole line
@@ -43,8 +43,8 @@ T getCorrectNumber(T a, T b, bool included, istream& in) // check that number is
 	}
 	return x;
 }
-template int getCorrectNumber<int>(int a, int b, bool included, istream& in);
-template double getCorrectNumber<double>(double a, double b, bool included, istream& in);
+template int getCorrectNumber(int a, int b, bool included, istream& in);
+template double getCorrectNumber(double a, double b, bool included, istream& in);
 
 template <typename T> // как проверить красиво на полож число??? --> никак, сделали через флаг	
 T getPositiveNumber(istream& in)

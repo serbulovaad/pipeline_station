@@ -1,6 +1,0 @@
-9
-name.tst
-9
-name.txt
-3
-6

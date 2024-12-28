@@ -12,9 +12,9 @@ int MenuOutput()
 	while (1)
 	{
 		cout << "---------------\nMenu\n"
-			"1. Add pipe\n2. Add CS\n3. View all objects\n" 
-			"4. Pipe's editor\n5. CS's editor\n6. Connect CS\n7. Disconnect CS\n"
-			"8. Print Refinary\n9. Topological sorting\n10. Max flow\n11. Best path\n"
+			"1. Print all objects\n2. Print Refinary\n3. Add pipe\n4. Add CS\n" 
+			"5. Pipe's editor\n6. CS's editor\n7. Connect CS\n8. Disconnect CS\n"
+			"9. Topological sorting\n10. Max flow\n11. Best path\n"
 			"12. Save refinary system\n13. Download refinary system\n14. Delete refinary system\n"
 			"0. Exit\n---------------\n";
 		cout << "Choose option: ";
@@ -27,69 +27,69 @@ int MenuOutput()
 			return 0;
 		}
 		case 1:
-		{  
-			cout << "Adding pipe" << endl << endl;
-			ref.startPipe();
-			break;
-		}
-		case 2:
 		{
-			cout << "Adding CS" << endl << endl;
-			ref.startCS();
-			break; 
-		}
-		case 3:
-		{
-			cout << "Viewing all objects" << endl << endl;
+			cout << "Print all objects" << endl << endl;
 			ref.viewAll();
 			break;
 		}
-		case 4:
-		{
-			cout << "Opening Pipe's editor" << endl << endl;
-			ref.pipeEditor();
-			break;
-		}
-		case 5:
-		{
-			cout << "Opening CS's editor" << endl << endl;
-			ref.CSEditor();
-			break;
-		}
-		case 6:
-		{
-			cout << "Connecting CSs" << endl << endl;
-			ref.connectCS();
-			break;
-		}
-		case 7:
-		{
-			cout << "Disconnect CS" << endl << endl;
-			ref.disconnectCS();
-			break;
-		}
-		case 8:
+		case 2:
 		{
 			cout << "Print Refinary" << endl << endl;
 			ref.printConnection();
 			break;
 		}
+		case 3:
+		{  
+			cout << "Adding pipe" << endl << endl;
+			ref.startPipe();
+			break;
+		}
+		case 4:
+		{
+			cout << "Adding CS" << endl << endl;
+			ref.startCS();
+			break; 
+		}
+		case 5:
+		{
+			cout << "Opening Pipe's editor" << endl << endl;
+			ref.pipeEditor();
+			break;
+		}
+		case 6:
+		{
+			cout << "Opening CS's editor" << endl << endl;
+			ref.CSEditor();
+			break;
+		}
+		case 7:
+		{
+			cout << "Connecting CSs" << endl << endl;
+			ref.connectCS();
+			break;
+		}
+		case 8:
+		{
+			cout << "Disconnect CS" << endl << endl;
+			ref.disconnectCS();
+			break;
+		}
 		case 9:
 		{
 			cout << "Topological sorting" << endl << endl;
-			ref.start_sort();
+			//ref.start_sort();
 			break;
 		}
 		case 10:
 		{
 			cout << "Max flow" << endl << endl;
-			ref.start_pathlen();
+			//ref.start_pathlen();
 			break;
 		}
 		case 11:
 		{
 			cout << "Best path" << endl << endl;
-			ref.start_short();
+			//ref.start_short();
 			break;
 		}
 		case 12:

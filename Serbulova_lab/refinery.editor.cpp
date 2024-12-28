@@ -1,5 +1,6 @@
 #include "refinary.h"
 #include "help.h"
+#include "link.h"
 using namespace std;
 
 void coutFoundWithId(unordered_set<int>& set)
@@ -9,9 +10,6 @@ void coutFoundWithId(unordered_set<int>& set)
 		cout << "ID = " << id << endl;
 
 }
-
-template<typename T>
-void Editor(std::unordered_map<int, T>& map);
 
 void refinary::pipeEditor()
 {
@@ -155,28 +153,50 @@ void editMap(unordered_map<int, CS>& map)
 	std::cout << "All possible selected objects were edited" << endl;
 }
 
-void refinary::delete_it(std::unordered_map<int, pipe>& map, std::unordered_set<int>& set)
+void  refinary::delete_it(std::unordered_map<int, pipe> map, std::unordered_set<int>& s)
 {
-	for (int id : set)
-		if (linkset.contains(id))
+	set<int> helpo;
+	for (auto& val : linkset)
+		if (s.contains(val.pipeID))
+			helpo.emplace(val.pipeID);
+
+	for (auto& id : s)
+	{
+		if (helpo.contains(id))
+		{
 			cout << "Please disconnect pipe with ID = " << id << " to delete it" << endl;
-		else
-			map.erase(id);
+			if (confirm("Want to disconnect it now ?"))
+				try_disconnect_pipe_with_id(id);
+			else break;
+		}
+		pipemap.erase(id);
+		std::cout << "Pipe with ID = " << id << " deleted" << endl;
+	}
 }
 
-void refinary::delete_it(std::unordered_map<int, CS>& map, std::unordered_set<int>& set)
+void refinary::delete_it(std::unordered_map<int, CS> map, std::unordered_set<int>& s)
 {
-	for (int id : set)
-		for (auto& [i, vecval] : linkset)
-			for (int k = 0; k < vecval.size(); k++)
-				if (vecval[k].csInID == i or vecval[k].csOutID == i)
-				{
-					cout << "Please disconnect cs with ID = " << id << " to delete it" << endl;
-					break;
-				}
-				else
-					map.erase(id);
+	set<int> helpo;
+	for (auto& val : linkset)
+	{
+		if (s.contains(val.csInID))
+			helpo.emplace(val.csInID);
+		if (s.contains(val.csOutID))
+			helpo.emplace(val.csOutID);
+	}
 
+	for (auto& id : s)
+	{
+		if (helpo.contains(id))
+		{
+			cout << "Please disconnect CS with ID = " << id << " to delete it" << endl;
+			if (confirm("Want to disconnect it now ?"))
+				try_disconnect_cs_with_id(id);
+			else break;
+		}
+		csmap.erase(id);
+		std::cout << "CS with ID = " << id << " deleted" << endl;
+	}
 }
 
 template<typename T>
@@ -203,7 +223,6 @@ void refinary::editSelected(std::unordered_map<int, T>& map, std::unordered_set<
 	case 3:
 	{
 		delete_it(map, set);
-		std::cout << "All selected objects were deleted" << endl;
 		return;
 	}
 	default:
