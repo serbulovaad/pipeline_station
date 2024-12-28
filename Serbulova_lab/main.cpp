@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "help.h"
 #include "pipe.h"
 #include "CS.h"
@@ -6,6 +6,21 @@
 #include "graph.h"
 using namespace std;
 using namespace chrono;
+
+void christmasTree()
+{
+	std::cout << "        *"<< endl;
+	std::cout << "       / \\" << endl;
+	std::cout << "      /Ð¾/_\\" << endl;
+	std::cout << "      / /Ð¾\\" << endl;
+	std::cout << "     /8/ / \\   Happy New Year!" << endl;
+	std::cout << "    /_/8/_/_\\  Ð¡ ÐÐ¾Ð²Ñ‹Ð¼ Ð“Ð¾Ð´Ð¾Ð¼!" << endl;
+	std::cout << "    /Ð¾/ /8/ \\  " << endl;
+	std::cout << "   / /Ð¾/ /8/ \\ " << endl;
+	std::cout << "  /8/ /Ð¾/ /8/ \\" << endl;
+	std::cout << " /_/8/_/Ð¾/_/8/_\\" << endl;
+	std::cout << "       |_|" << endl;
+}
 
 int MenuOutput()
 {
@@ -25,6 +40,7 @@ int MenuOutput()
 		case 0:
 		{
 			cout << "Goodbye" << endl;
+			christmasTree();
 			return 0;
 		}
 		case 1:
@@ -166,9 +182,11 @@ int MenuOutput()
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	cout << "Ïðèâåò Hello" << endl;
+	cout << "ÐŸÑ€Ð¸Ð²ÐµÑ‚ Hello" << endl;
+	cout << "Happy new year!" << endl;
 
-	//ëîãèðîâàíèå â îòäåëüíûé ôàéë
+
+	//Ð»Ð¾Ð³Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ Ð² Ð¾Ñ‚Ð´ÐµÐ»ÑŒÐ½Ñ‹Ð¹ Ñ„Ð°Ð¹Ð»
 	redirect_output_wrapper cerr_out(cerr);
 	string time = std::format("{:%d_%m_%Y %H_%M_%OS}", system_clock::now());
 	ofstream logfile("log_" + time + ".txt");
